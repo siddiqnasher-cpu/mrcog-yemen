@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب - mrcog-yemen.com</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-page">
+
+    <!-- Simple Navigation -->
+    <header class="navbar glass">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-text">MRCOG<span class="highlight">-Yemen</span></span>
+            </a>
+            <div class="nav-actions">
+                <button class="lang-switcher btn btn-secondary" style="padding: 5px 15px; font-size: 0.9rem; margin: 0 5px;">English</button>
+                <a href="index.html" class="btn btn-outline" data-i18n="auth-back">العودة للرئيسية</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Auth Form -->
+    <div class="auth-wrapper">
+        <div class="auth-bg"></div>
+        <div class="container auth-container">
+            <div class="auth-card glass-hover register-card">
+                <div class="auth-header text-center">
+                    <h2 data-i18n="register-title">انضم <span class="highlight">إلينا!</span></h2>
+                    <p class="text-muted" data-i18n="register-desc">ابدأ رحلة تفوقك واجتياز امتحان الزمالة بنجاح.</p>
+                </div>
+                
+                <form class="auth-form" action="index.html" method="GET">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fname" data-i18n="label-fname">الاسم الأول</label>
+                            <input type="text" id="fname" class="form-control" placeholder="أدخل الاسم الأول" data-i18n="ph-fname" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lname" data-i18n="label-lname">الاسم الأخير</label>
+                            <input type="text" id="lname" class="form-control" placeholder="أدخل العائلة" data-i18n="ph-lname" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" data-i18n="label-email">البريد الإلكتروني</label>
+                        <input type="email" id="email" class="form-control" placeholder="أدخل بريدك الإلكتروني" data-i18n="ph-email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone" data-i18n="label-phone">رقم الهاتف (مع الرمز الدولي)</label>
+                        <input type="tel" id="phone" class="form-control" placeholder="العنوان، مثلاً +20123..." data-i18n="ph-phone" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" data-i18n="label-password">كلمة المرور</label>
+                        <input type="password" id="password" class="form-control" placeholder="أدخل كلمة المرور" data-i18n="ph-password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-block btn-large mt-4" data-i18n="btn-register">إنشاء الحساب</button>
+                    
+                    <div class="auth-footer text-center mt-4">
+                        <p data-i18n="have-account">لديك حساب بالفعل؟ <a href="login.html" class="highlight under-link" data-i18n="link-login">تسجيل الدخول</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

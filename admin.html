@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم الإدارية - mrcog-yemen.com</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css"> <!-- New dedicated styles for admin -->
+</head>
+<body class="admin-body">
+
+    <!-- Preloader/Auth Check (Simulated in JS) -->
+    <div id="authOverlay" class="auth-overlay">
+        <div class="loader">جاري التحقق من الصلاحيات...</div>
+    </div>
+
+    <!-- MAIN ADMIN LAYOUT -->
+    <div class="admin-layout" style="display: none;" id="adminLayout">
+        
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar glass-panel">
+            <div class="sidebar-header">
+                <a href="index.html" class="logo">
+                    <span class="logo-text">MRCOG<span class="highlight">-Yemen</span></span>
+                </a>
+                <span class="badge admin-badge">لوحة الإدارة</span>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul class="nav-list" id="adminTabs">
+                    <li class="nav-item active" data-target="overview">
+                        <i class="fas fa-chart-pie"></i> <span data-i18n="admin-nav-overview">نظرة عامة</span>
+                    </li>
+                    <li class="nav-item" data-target="courses">
+                        <i class="fas fa-book-medical"></i> <span data-i18n="admin-nav-courses">إدارة الكورسات</span>
+                    </li>
+                    <li class="nav-item" data-target="users">
+                        <i class="fas fa-users"></i> <span data-i18n="admin-nav-users">إدارة الطلاب</span>
+                    </li>
+                    <li class="nav-item" data-target="subscriptions">
+                        <i class="fas fa-file-invoice-dollar"></i> <span data-i18n="admin-nav-subs">إدارة الاشتراكات</span>
+                    </li>
+                    <li class="nav-item" data-target="doctor">
+                        <i class="fas fa-user-md"></i> <span data-i18n="admin-nav-doctor">المدرب / المحتوى</span>
+                    </li>
+                    <li class="nav-item" data-target="enquiries">
+                        <i class="fas fa-envelope-open-text"></i> <span data-i18n="admin-nav-enquiries">الاستفسارات</span>
+                    </li>
+                    <li class="nav-item" data-target="settings">
+                        <i class="fas fa-cogs"></i> <span data-i18n="admin-nav-settings">إعدادات المنصة</span>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="btn btn-outline btn-block" id="logoutBtn" data-i18n="admin-logout">تسجيل الخروج</button>
+                <div class="lang-switch-admin mt-4 text-center">
+                    <a href="#" class="lang-switcher highlight under-link">English</a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="admin-main">
+            <!-- TOP BAR -->
+            <header class="admin-topbar glass-panel">
+                <div class="mobile-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <div class="topbar-actions">
+                    <div class="user-profile">
+                        <div class="avatar">أ</div>
+                        <span class="name">المدير العام</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- TAB CONTENTS -->
+            <div class="admin-content-wrapper">
+                
+                <!-- VIEW 1: OVERVIEW -->
+                <div class="tab-pane active" id="overview">
+                    <h2 class="page-title" data-i18n="admin-title-overview">نظرة عامة / الإحصائيات</h2>
+                    
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card glass-hover">
+                            <div class="stat-icon primary-bg"><i class="fas fa-users"></i></div>
+                            <div class="stat-details">
+                                <h3 data-i18n="admin-stat-users">إجمالي الطلاب</h3>
+                                <p class="stat-number">1,245</p>
+                            </div>
+                        </div>
+                        <div class="stat-card glass-hover">
+                            <div class="stat-icon secondary-bg"><i class="fas fa-book-open"></i></div>
+                            <div class="stat-details">
+                                <h3 data-i18n="admin-stat-courses">الكورسات المفعلة</h3>
+                                <p class="stat-number">4</p>
+                            </div>
+                        </div>
+                        <div class="stat-card glass-hover">
+                            <div class="stat-icon highlight-bg"><i class="fas fa-graduation-cap"></i></div>
+                            <div class="stat-details">
+                                <h3 data-i18n="admin-stat-enroll">المسجلين اليوم</h3>
+                                <p class="stat-number">12</p>
+                            </div>
+                        </div>
+                        <div class="stat-card glass-hover">
+                            <div class="stat-icon dark-bg"><i class="fas fa-wallet"></i></div>
+                            <div class="stat-details">
+                                <h3 data-i18n="admin-stat-subs">الاشتراكات النشطة</h3>
+                                <p class="stat-number">890</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity Table -->
+                    <div class="card glass-panel mt-4">
+                        <div class="card-header">
+                            <h3 data-i18n="admin-activity">النشاط الأخير</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>الطالب</th>
+                                            <th>الإجراء</th>
+                                            <th>الكورس</th>
+                                            <th>الوقت</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>أحمد صالح</td>
+                                            <td><span class="status pulse-success">اشتراك جديد</span></td>
+                                            <td>MRCOG Part 2 Crash</td>
+                                            <td>منذ ١٠ دقائق</td>
+                                        </tr>
+                                        <tr>
+                                            <td>د. سارة</td>
+                                            <td>تحديث بيانات</td>
+                                            <td>-</td>
+                                            <td>منذ ساعة</td>
+                                        </tr>
+                                        <tr>
+                                            <td>محمد ناصر</td>
+                                            <td><span class="status pulse-success">اشتراك جديد</span></td>
+                                            <td>Jan 2026 Regular</td>
+                                            <td>امس</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 2: COURSES MANAGEMENT -->
+                <div class="tab-pane" id="courses">
+                    <div class="page-header d-flex justify-between align-center">
+                        <h2 class="page-title" data-i18n="admin-nav-courses">إدارة الكورسات</h2>
+                        <button class="btn btn-primary" onclick="openModal('courseModal')"><i class="fas fa-plus"></i> إضافة كورس جديد</button>
+                    </div>
+
+                    <div class="card glass-panel mt-4">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>اسم الكورس</th>
+                                            <th>المدرب</th>
+                                            <th>السعر السنوي</th>
+                                            <th>الحالة</th>
+                                            <th>الإجراءات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="coursesTableBody">
+                                        <!-- Will be populated via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 3: USERS / STUDENTS -->
+                <div class="tab-pane" id="users">
+                    <div class="page-header d-flex justify-between align-center">
+                        <h2 class="page-title" data-i18n="admin-nav-users">إدارة الطلاب</h2>
+                        <div class="search-box">
+                            <input type="text" class="form-control" placeholder="ابحث عن طالب..." data-i18n="admin-search-student">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </div>
+
+                    <div class="card glass-panel mt-4">
+                        <div class="card-body">
+                            <div class="filter-bar mb-3 justify-between align-center">
+                                <div>
+                                    <button class="btn btn-sm btn-secondary active">الكل</button>
+                                    <button class="btn btn-sm btn-outline">النشطين فقط</button>
+                                    <button class="btn btn-sm btn-outline">الموقوفين</button>
+                                </div>
+                                <button class="btn btn-sm btn-primary" onclick="openModal('addStudentModal')">
+                                    <i class="fas fa-user-plus"></i> <span data-i18n="admin-add-student">أضف طالب جديد</span>
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>الاسم</th>
+                                            <th>البريد الإلكتروني</th>
+                                            <th>الرقم</th>
+                                            <th>الكورسات المسجلة</th>
+                                            <th>حالة الحساب</th>
+                                            <th>الإجراءات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usersTableBody">
+                                        <!-- Will be populated via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 4: SUBSCRIPTIONS -->
+                <!-- We will add the other views similarly -->
+                <div class="tab-pane" id="subscriptions">
+                    <h2 class="page-title" data-i18n="admin-nav-subs">إدارة الاشتراكات</h2>
+                    <p class="text-muted">هنا يتم تتبع تفاصيل الدفع ومنح الصلاحيات اليدوية (قبل ربط Stripe).</p>
+                    <!-- Simple list for now -->
+                     <div class="card glass-panel mt-4">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>رقم الاشتراك</th>
+                                            <th>الطالب</th>
+                                            <th>الكورس</th>
+                                            <th>تاريخ الانتهاء</th>
+                                            <th>الحالة</th>
+                                            <th>تعديل الوصول</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>#SUB-9912</td>
+                                            <td>فاطمة علي</td>
+                                            <td>MRCOG Regular</td>
+                                            <td>20-07-2026</td>
+                                            <td><span class="badge bg-success">نشط</span></td>
+                                            <td><button class="btn btn-sm btn-outline"><i class="fas fa-ban"></i> إيقاف</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                     </div>
+                </div>
+                
+                <!-- VIEW 5: DOCTOR/CONTENT -->
+                <div class="tab-pane" id="doctor">
+                    <h2 class="page-title" data-i18n="admin-nav-doctor">المدرب والمحتوى</h2>
+                    <div class="card glass-panel mt-4">
+                        <div class="card-body">
+                            <form class="admin-form">
+                                <h3 class="mb-3">تحديث بيانات المدرب</h3>
+                                <div class="form-group">
+                                    <label>اسم المدرب (كما يظهر في الرئيسية)</label>
+                                    <input type="text" class="form-control" value="Led by Dr. أميرة الحميدي">
+                                </div>
+                                <div class="form-group">
+                                    <label>السيرة الذاتية (نبذة)</label>
+                                    <textarea class="form-control" rows="4">استشارية أمراض النساء والتوليد وزميلة الكلية الملكية...</textarea>
+                                </div>
+                                <button type="button" class="btn btn-primary mt-3">حفظ البيانات</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 6: ENQUIRIES -->
+                <div class="tab-pane" id="enquiries">
+                    <h2 class="page-title" data-i18n="admin-nav-enquiries">الاستفسارات الواردة</h2>
+                    <p class="text-muted">طلبات الاتصال التي تصل من صفحة "اتصل بنا".</p>
+                    <div class="card glass-panel mt-4">
+                         <div class="card-body">
+                            <p class="text-center text-muted py-4">لا توجد استفسارات جديدة حالياً.</p>
+                         </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 7: SETTINGS -->
+                <div class="tab-pane" id="settings">
+                    <h2 class="page-title" data-i18n="admin-nav-settings">إعدادات المنصة</h2>
+                    
+                    <div class="card glass-panel mt-4">
+                        <div class="card-header">
+                            <h3>معلومات التواصل والتذييل</h3>
+                        </div>
+                        <div class="card-body">
+                            <form class="admin-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>اسم المنصة</label>
+                                        <input type="text" class="form-control" value="mrcog-yemen.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>البريد الإلكتروني للإدارة</label>
+                                        <input type="email" class="form-control" value="Mohammednasher532@gmail.com">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>رقم هاتف 1 (واتساب)</label>
+                                        <input type="text" class="form-control" value="+967 718 103 626">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>رقم هاتف 2 (مكالمات)</label>
+                                        <input type="text" class="form-control" value="+967 774 939 168">
+                                    </div>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label>وصف التذييل (Footer)</label>
+                                    <textarea class="form-control" rows="3">منصتك الأولى للتحضير لامتحانات الزمالة البريطانية...</textarea>
+                                </div>
+                                <button type="button" class="btn btn-primary mt-4">تحديث الإعدادات</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- End Content Wrapper -->
+        </main>
+    </div>
+
+    <!-- MODALS ZONE -->
+    
+    <!-- Course Modal -->
+    <div id="courseModal" class="admin-modal">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h3>إضافة كورس جديد</h3>
+                <span class="close-modal" onclick="closeModal('courseModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="courseForm">
+                    <div class="form-group">
+                        <label>عنوان الكورس</label>
+                        <input type="text" class="form-control" id="courseName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>نوع الكورس</label>
+                        <select class="form-control" id="courseType">
+                            <option value="Regular">منتظم (Regular)</option>
+                            <option value="Crash">مكثف (Crash)</option>
+                            <option value="Revision">مراجعة (Revision)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>السعر السنوي ($)</label>
+                        <input type="number" class="form-control" id="coursePrice" required>
+                    </div>
+                    <div class="form-group mt-4 text-left">
+                        <button type="button" class="btn btn-outline" onclick="closeModal('courseModal')">إلغاء</button>
+                        <button type="submit" class="btn btn-primary">حفظ الكورس</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Modal (Edit details) -->
+    <div id="userModal" class="admin-modal">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h3>تحديث بيانات الطالب</h3>
+                <span class="close-modal" onclick="closeModal('userModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">جاري تحميل البيانات...</p>
+                <button type="button" class="btn btn-outline mt-3" onclick="closeModal('userModal')">اغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Student Modal -->
+    <div class="admin-modal" id="addStudentModal">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h3 data-i18n="admin-add-student">أضف طالب جديد</h3>
+                <span class="close-modal" onclick="closeModal('addStudentModal')">&times;</span>
+            </div>
+            <div class="modal-body admin-form">
+                <form id="addStudentForm">
+                    <div class="form-group">
+                        <label data-i18n="admin-user-name">اسم الطالب</label>
+                        <input type="text" class="form-control" id="newStudentName" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="admin-user-email">البريد الإلكتروني</label>
+                        <input type="email" class="form-control" id="newStudentEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="admin-user-phone">رقم الهاتف (واتس آب)</label>
+                        <input type="tel" class="form-control" id="newStudentPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="admin-user-status">حالة الحساب</label>
+                        <select class="form-control" id="newStudentStatus">
+                            <option value="نشط">نشط</option>
+                            <option value="غير نشط">غير نشط</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-3" data-i18n="admin-save-student">إضافة الطالب وتأكيد بياناته</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
