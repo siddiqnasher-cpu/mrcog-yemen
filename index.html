@@ -16,6 +16,9 @@
     
     <!-- FontAwesome Hooks -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -30,6 +33,7 @@
                 <a href="#courses" data-i18n="nav-courses">كورساتنا</a>
                 <a href="#faq" data-i18n="nav-faq">الأسئلة الشائعة</a>
                 <a href="#contact" data-i18n="nav-contact">اتصل بنا</a>
+                <a href="#" class="btn-help-modal" onclick="openHelpModal()" data-i18n="nav-help">طلب مساعدة</a>
             </nav>
             <div class="nav-actions">
                 <button class="lang-switcher btn btn-secondary" style="padding: 5px 15px; font-size: 0.9rem; margin: 0 5px;">English</button>
@@ -286,6 +290,92 @@
         </div>
     </section>
 
+    <!-- News & Updates Section -->
+    <section id="news-section" class="section-padding bg-light">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2 class="section-title">آخر <span class="highlight">الأخبار</span> والتحديثات</h2>
+                <p class="section-desc">ابقَ على اطلاع بأحدث التطورات في برامجنا التدريبية.</p>
+            </div>
+            <div id="news-container" class="row">
+                <!-- Will be populated via JS -->
+                <p class="text-center text-muted col-12">جاري تحميل الأخبار...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Section (Optional/Gallery) -->
+    <section id="projects-section" class="section-padding bg-white">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2 class="section-title">مشاريعنا <span class="highlight">وإنجازاتنا</span></h2>
+                <p class="section-desc">لمحة عن البرامج والمبادرات التي قمنا بتنفيذها.</p>
+            </div>
+            <div id="projects-container" class="row">
+                <!-- Will be populated via JS -->
+                <p class="text-center text-muted col-12">جاري تحميل المشاريع...</p>
+            </div>
+        </div>
+    </section>
+    <section id="contact-form-section" class="section-padding bg-white">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2 class="section-title">أرسل لنا <span class="highlight">رسالة</span></h2>
+                <p class="section-desc">اترك لنا استفسارك وسنعاود الاتصال بك في أقرب وقت.</p>
+            </div>
+            <div class="contact-form-wrapper glass-panel" style="max-width: 700px; margin: 0 auto; padding: 40px; border-radius: var(--radius-lg);">
+                <form id="contactForm" class="admin-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact-name">الاسم بالكامل</label>
+                            <input type="text" id="contact-name" class="form-control" placeholder="أدخل اسمك" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-email">البريد الإلكتروني</label>
+                            <input type="email" id="contact-email" class="form-control" placeholder="أدخل بريدك الإلكتروني" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-message">الرسالة</label>
+                        <textarea id="contact-message" class="form-control" rows="5" placeholder="اكتب رسالتك هنا..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-large mt-3">إرسال الرسالة</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Help Request Modal -->
+    <div id="helpModal" class="admin-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+        <div class="modal-content glass-panel" style="max-width: 500px; width: 90%; background: white; border-radius: var(--radius-lg); padding: 0; overflow: hidden;">
+            <div class="modal-header" style="padding: 20px 30px; background: var(--bg-light); border-bottom: 1px solid var(--admin-border); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0;">طلب مساعدة تقنية</h3>
+                <span class="close-modal" onclick="closeHelpModal()" style="cursor: pointer; font-size: 1.5rem;">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <form id="helpRequestForm">
+                    <div class="form-group">
+                        <label for="help-name">الاسم</label>
+                        <input type="text" id="help-name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="help-email">البريد الإلكتروني</label>
+                        <input type="email" id="help-email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="help-subject">الموضوع</label>
+                        <input type="text" id="help-subject" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="help-desc">وصف المشكلة</label>
+                        <textarea id="help-desc" class="form-control" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block mt-3">إرسال الطلب</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer id="contact" class="footer">
         <div class="container footer-container">
@@ -320,6 +410,7 @@
         </div>
     </footer>
 
+    <script src="supabase-config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

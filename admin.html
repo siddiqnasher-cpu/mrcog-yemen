@@ -13,6 +13,9 @@
     <!-- FontAwesome for Icons -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="admin.css"> <!-- New dedicated styles for admin -->
@@ -55,6 +58,15 @@
                     </li>
                     <li class="nav-item" data-target="enquiries">
                         <i class="fas fa-envelope-open-text"></i> <span data-i18n="admin-nav-enquiries">الاستفسارات</span>
+                    </li>
+                    <li class="nav-item" data-target="help-requests">
+                        <i class="fas fa-hands-helping"></i> <span data-i18n="admin-nav-help">طلبات المساعدة</span>
+                    </li>
+                    <li class="nav-item" data-target="news">
+                        <i class="fas fa-newspaper"></i> <span data-i18n="admin-nav-news">إدارة الأخبار</span>
+                    </li>
+                    <li class="nav-item" data-target="projects">
+                        <i class="fas fa-project-diagram"></i> <span data-i18n="admin-nav-projects">إدارة المشاريع</span>
                     </li>
                     <li class="nav-item" data-target="settings">
                         <i class="fas fa-cogs"></i> <span data-i18n="admin-nav-settings">إعدادات المنصة</span>
@@ -301,8 +313,104 @@
                     <p class="text-muted">طلبات الاتصال التي تصل من صفحة "اتصل بنا".</p>
                     <div class="card glass-panel mt-4">
                          <div class="card-body">
-                            <p class="text-center text-muted py-4">لا توجد استفسارات جديدة حالياً.</p>
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>الاسم</th>
+                                            <th>البريد الإلكتروني</th>
+                                            <th>الرسالة</th>
+                                            <th>التاريخ</th>
+                                            <th>الإجراء</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="messagesTableBody">
+                                        <!-- Will be populated via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
                          </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 8: HELP REQUESTS -->
+                <div class="tab-pane" id="help-requests">
+                    <h2 class="page-title" data-i18n="admin-nav-help">طلبات المساعدة التقنية</h2>
+                    <p class="text-muted">الطلبات المرسلة عبر نموذج "طلب مساعدة".</p>
+                    <div class="card glass-panel mt-4">
+                         <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>الاسم</th>
+                                            <th>البريد الإلكتروني</th>
+                                            <th>الموضوع</th>
+                                            <th>الوصف</th>
+                                            <th>التاريخ</th>
+                                            <th>الحالة</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="helpRequestsTableBody">
+                                        <!-- Will be populated via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 9: NEWS MANAGEMENT -->
+                <div class="tab-pane" id="news">
+                    <div class="page-header d-flex justify-between align-center">
+                        <h2 class="page-title" data-i18n="admin-nav-news">إدارة الأخبار</h2>
+                        <button class="btn btn-primary" onclick="openModal('newsModal')"><i class="fas fa-plus"></i> إضافة خبر جديد</button>
+                    </div>
+                    <div class="card glass-panel mt-4">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>العنوان</th>
+                                            <th>التاريخ</th>
+                                            <th>الحالة</th>
+                                            <th>الإجراءات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="newsTableBody">
+                                        <!-- Will be populated via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 10: PROJECTS MANAGEMENT -->
+                <div class="tab-pane" id="projects">
+                    <div class="page-header d-flex justify-between align-center">
+                        <h2 class="page-title" data-i18n="admin-nav-projects">إدارة المشاريع</h2>
+                        <button class="btn btn-primary" onclick="openModal('projectModal')"><i class="fas fa-plus"></i> إضافة مشروع جديد</button>
+                    </div>
+                    <div class="card glass-panel mt-4">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>اسم المشروع</th>
+                                            <th>الوصف</th>
+                                            <th>الرابط</th>
+                                            <th>الإجراءات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="projectsTableBody">
+                                        <!-- Will be populated via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -434,6 +542,57 @@
         </div>
     </div>
 
+    <!-- News Modal -->
+    <div id="newsModal" class="admin-modal">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h3>إضافة خبر جديد</h3>
+                <span class="close-modal" onclick="closeModal('newsModal')">&times;</span>
+            </div>
+            <div class="modal-body admin-form">
+                <form id="newsForm">
+                    <div class="form-group">
+                        <label>عنوان الخبر</label>
+                        <input type="text" class="form-control" id="newsTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label>المحتوى</label>
+                        <textarea class="form-control" id="newsContent" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block mt-3">حفظ الخبر</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Modal -->
+    <div id="projectModal" class="admin-modal">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h3>إضافة مشروع جديد</h3>
+                <span class="close-modal" onclick="closeModal('projectModal')">&times;</span>
+            </div>
+            <div class="modal-body admin-form">
+                <form id="projectForm">
+                    <div class="form-group">
+                        <label>اسم المشروع</label>
+                        <input type="text" class="form-control" id="projectName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>وصف المشروع</label>
+                        <textarea class="form-control" id="projectDesc" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>رابط المشروع</label>
+                        <input type="url" class="form-control" id="projectLink">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block mt-3">حفظ المشروع</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="supabase-config.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>

@@ -7,6 +7,7 @@ const translations = {
         "nav-contact": "اتصل بنا",
         "nav-login": "تسجيل الدخول",
         "nav-subscribe": "اشترك الآن",
+        "nav-help": "طلب مساعدة",
         
         // Hero
         "hero-badge": "الخيار الأول للنجاح 🌟",
@@ -123,6 +124,7 @@ const translations = {
         "nav-contact": "Contact Us",
         "nav-login": "Login",
         "nav-subscribe": "Subscribe Now",
+        "nav-help": "Help Request",
         
         // Hero
         "hero-badge": "The #1 Choice for Success 🌟",
@@ -303,6 +305,99 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Modal Logic for Help Request
+    window.openHelpModal = () => {
+        const modal = document.getElementById('helpModal');
+        if (modal) modal.style.display = 'flex';
+    };
+
+    window.closeHelpModal = () => {
+        const modal = document.getElementById('helpModal');
+        if (modal) modal.style.display = 'none';
+    };
+
+    // Supabase Form Submissions ------------------------
+    
+    // Contact Form
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = contactForm.querySelector('button');
+            const originalText = btn.textContent;
+            
+            const name = document.getElementById('contact-name').value;
+            const email = document.getElementById('contact-email').value;
+            const message = document.getElementById('contact-message').value;
+
+            if (!window.supabaseClient || window.supabaseClient.supabaseUrl === 'YOUR_SUPABASE_URL') {
+                alert(currentLang === 'ar' ? "خطأ: لم يتم ضبط إعدادات Supabase بشكل صحيح في supabase-config.js." : "Error: Supabase is not configured correctly in supabase-config.js.");
+                return;
+            }
+
+            try {
+                btn.disabled = true;
+                btn.textContent = currentLang === 'ar' ? 'جاري الإرسال...' : 'Sending...';
+
+                const { error } = await window.supabaseClient
+                    .from('messages')
+                    .insert([{ name, email, message }]);
+
+                if (error) throw error;
+
+                alert(currentLang === 'ar' ? 'تم إرسال رسالتك بنجاح! شكراً لتواصلك معنا.' : 'Message sent successfully! Thank you for contacting us.');
+                contactForm.reset();
+            } catch (err) {
+                console.error('Error sending message:', err);
+                alert(currentLang === 'ar' ? 'عذراً، حدث خطأ أثناء الإرسال: ' + (err.message || err) : 'Error sending message: ' + (err.message || err));
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
+    }
+
+    // Help Request Form
+    const helpForm = document.getElementById('helpRequestForm');
+    if (helpForm) {
+        helpForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = helpForm.querySelector('button');
+            const originalText = btn.textContent;
+
+            const student_name = document.getElementById('help-name').value;
+            const student_email = document.getElementById('help-email').value;
+            const subject = document.getElementById('help-subject').value;
+            const description = document.getElementById('help-desc').value;
+
+            if (!window.supabaseClient || window.supabaseClient.supabaseUrl === 'YOUR_SUPABASE_URL') {
+                alert(currentLang === 'ar' ? "خطأ: لم يتم ضبط إعدادات Supabase بشكل صحيح في supabase-config.js." : "Error: Supabase is not configured correctly in supabase-config.js.");
+                return;
+            }
+
+            try {
+                btn.disabled = true;
+                btn.textContent = currentLang === 'ar' ? 'جاري الإرسال...' : 'Sending...';
+
+                const { error } = await window.supabaseClient
+                    .from('help_requests')
+                    .insert([{ student_name, student_email, subject, description }]);
+
+                if (error) throw error;
+
+                alert(currentLang === 'ar' ? 'تم إرسال طلب المساعدة بنجاح! سنقوم بالرد عليك قريباً.' : 'Help request sent successfully! We will get back to you soon.');
+                helpForm.reset();
+                closeHelpModal();
+            } catch (err) {
+                console.error('Error sending help request:', err);
+                alert(currentLang === 'ar' ? 'عذراً، حدث خطأ أثناء إرسال الطلب: ' + (err.message || err) : 'Error sending help request: ' + (err.message || err));
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
+    }
+
     // Smooth Scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -382,7 +477,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const emailInput = document.getElementById('email').value.trim().toLowerCase();
             
             // Basic Frontend Validation & RBAC (Role-Based Access Control)
-            if (emailInput === "mohammednasher532@gmail.com") {
+            const admins = ["mohammednasher532@gmail.com", "siddiqnasher@gmail.com"];
+            if (admins.includes(emailInput)) {
                 localStorage.setItem("userRole", "admin");
                 localStorage.setItem("userEmail", emailInput);
                 alert("تم تسجيل الدخول بنجاح كمسؤول! سيتم توجيهك إلى لوحة التحكم.");
@@ -396,6 +492,79 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Fetch News and Projects for Homepage
+    async function fetchHomeContent() {
+        if (!window.supabaseClient) return;
+
+        // Fetch News
+        const newsContainer = document.getElementById('news-container');
+        if (newsContainer) {
+            try {
+                const { data: news, error } = await window.supabaseClient
+                    .from('news')
+                    .select('*')
+                    .eq('is_published', true)
+                    .order('created_at', { ascending: false })
+                    .limit(3);
+
+                if (error) throw error;
+
+                if (news) {
+                    newsContainer.innerHTML = news.length === 0 ? '<p class="text-center text-muted col-12">لا توجد أخبار حالياً.</p>' : '';
+                    news.forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'col-md-4 mb-4';
+                        card.innerHTML = `
+                            <div class="card h-100 glass-panel p-4">
+                                <h4>${item.title}</h4>
+                                <p class="text-muted small">${new Date(item.created_at).toLocaleDateString('ar-YE')}</p>
+                                <p>${item.content.substring(0, 100)}...</p>
+                            </div>
+                        `;
+                        newsContainer.appendChild(card);
+                    });
+                }
+            } catch (err) {
+                console.error('Error fetching news:', err);
+                newsContainer.innerHTML = '<p class="text-center text-danger col-12">فشل تحميل الأخبار.</p>';
+            }
+        }
+
+        // Fetch Projects
+        const projectsContainer = document.getElementById('projects-container');
+        if (projectsContainer) {
+            try {
+                const { data: projects, error } = await window.supabaseClient
+                    .from('projects')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(3);
+
+                if (error) throw error;
+
+                if (projects) {
+                    projectsContainer.innerHTML = projects.length === 0 ? '<p class="text-center text-muted col-12">لا توجد مشاريع حالياً.</p>' : '';
+                    projects.forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'col-md-4 mb-4';
+                        card.innerHTML = `
+                            <div class="card h-100 glass-panel p-4">
+                                <h4>${item.name}</h4>
+                                <p>${item.description.substring(0, 100)}...</p>
+                                ${item.link ? `<a href="${item.link}" target="_blank" class="btn btn-sm btn-outline mt-2">عرض المزيد</a>` : ''}
+                            </div>
+                        `;
+                        projectsContainer.appendChild(card);
+                    });
+                }
+            } catch (err) {
+                console.error('Error fetching projects:', err);
+                projectsContainer.innerHTML = '<p class="text-center text-danger col-12">فشل تحميل المشاريع.</p>';
+            }
+        }
+    }
+
     // Initialization
     setLanguage(currentLang);
+    fetchHomeContent();
 });

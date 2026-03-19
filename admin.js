@@ -12,7 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(() => {
         // Validate if user has admin privileges
-        if (userRole === "admin" && userEmail === "mohammednasher532@gmail.com") {
+        const admins = ["mohammednasher532@gmail.com", "siddiqnasher@gmail.com"];
+        if (userRole === "admin" && admins.includes(userEmail)) {
             // Verified
             authOverlay.style.display = 'none';
             adminLayout.style.display = 'grid'; // Grid is used for the layout
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
             initDashboard();
         } else {
             // Unverified - Redirect away to protect page
-            alert("غير مصرح لك بالوصول! هذه الصفحة مخصصة لمديري الموقع الذى يمتلك الايميل Mohammednasher532@gmail.com.");
+            alert("غير مصرح لك بالوصول! هذه الصفحة مخصصة لمديري الموقع.");
             window.location.href = "login.html";
         }
     }, 1000);
@@ -82,6 +83,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // 5. Populate Mock Data Data
         populateCoursesTable();
         populateUsersTable();
+        fetchMessages();
+        fetchHelpRequests();
+        fetchNews();
+        fetchProjects();
         
         // 6. Hook up the Translation
         initAdminI18n();
@@ -228,6 +233,149 @@ document.getElementById('addStudentForm')?.addEventListener('submit', function(e
     alert(adminLang === 'ar' ? "تمت إضافة الطالب بنجاح!" : "Student added successfully!");
 });
 
+// News and Projects Submissions
+document.getElementById('newsForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const title = document.getElementById('newsTitle').value;
+    const content = document.getElementById('newsContent').value;
+    const btn = this.querySelector('button');
+
+    if (!window.supabaseClient || window.supabaseClient.supabaseUrl === 'YOUR_SUPABASE_URL') {
+        alert("خطأ: لم يتم ضبط إعدادات Supabase بشكل صحيح. يرجى مراجعة ملف supabase-config.js.");
+        return;
+    }
+
+    try {
+        btn.disabled = true;
+        btn.textContent = "جاري الحفظ...";
+        const { error } = await window.supabaseClient.from('news').insert([{ title, content }]);
+        if (error) throw error;
+        alert("تمت إضافة الخبر بنجاح وسيظهر بعد التحديث!");
+        closeModal('newsModal');
+        this.reset();
+        await fetchNews();
+    } catch (err) {
+        console.error(err);
+        alert("حدث خطأ أثناء الإضافة: " + (err.message || err));
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "حفظ الخبر";
+    }
+});
+
+document.getElementById('projectForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const name = document.getElementById('projectName').value;
+    const description = document.getElementById('projectDesc').value;
+    const link = document.getElementById('projectLink').value;
+    const btn = this.querySelector('button');
+
+    if (!window.supabaseClient || window.supabaseClient.supabaseUrl === 'YOUR_SUPABASE_URL') {
+        alert("خطأ: لم يتم ضبط إعدادات Supabase بشكل صحيح. يرجى مراجعة ملف supabase-config.js.");
+        return;
+    }
+
+    try {
+        btn.disabled = true;
+        btn.textContent = "جاري الحفظ...";
+        const { error } = await window.supabaseClient.from('projects').insert([{ name, description, link }]);
+        if (error) throw error;
+        alert("تمت إضافة المشروع بنجاح وسيظهر بعد التحديث!");
+        closeModal('projectModal');
+        this.reset();
+        await fetchProjects();
+    } catch (err) {
+        console.error(err);
+        alert("حدث خطأ أثناء الإضافة: " + (err.message || err));
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "حفظ المشروع";
+    }
+});
+
+async function fetchNews() {
+    const tbody = document.getElementById('newsTableBody');
+    if (!tbody) return;
+    try {
+        const { data, error } = await window.supabaseClient.from('news').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+        tbody.innerHTML = (data && data.length > 0) ? '' : '<tr><td colspan="4" class="text-center">لا توجد أخبار</td></tr>';
+        data?.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${item.title}</strong></td>
+                <td>${new Date(item.created_at).toLocaleDateString()}</td>
+                <td><span class="badge ${item.is_published ? 'bg-success' : 'bg-warning'}">${item.is_published ? 'منشور' : 'مسودة'}</span></td>
+                <td><button class="btn btn-sm btn-outline"><i class="fas fa-trash"></i></button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (err) { console.error('Error fetching news:', err); }
+}
+
+async function fetchProjects() {
+    const tbody = document.getElementById('projectsTableBody');
+    if (!tbody) return;
+    try {
+        const { data, error } = await window.supabaseClient.from('projects').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+        tbody.innerHTML = (data && data.length > 0) ? '' : '<tr><td colspan="4" class="text-center">لا توجد مشاريع</td></tr>';
+        data?.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${item.name}</strong></td>
+                <td>${item.description.substring(0, 50)}...</td>
+                <td><a href="${item.link || '#'}" target="_blank">${item.link ? 'رابط' : '-'}</a></td>
+                <td><button class="btn btn-sm btn-outline"><i class="fas fa-trash"></i></button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (err) { console.error('Error fetching projects:', err); }
+}
+
+async function fetchMessages() {
+    const tbody = document.getElementById('messagesTableBody');
+    if (!tbody) return;
+    try {
+        const { data, error } = await window.supabaseClient.from('messages').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+        tbody.innerHTML = (data && data.length > 0) ? '' : '<tr><td colspan="5" class="text-center">لا توجد استفسارات</td></tr>';
+        data?.forEach(msg => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${msg.name}</strong></td>
+                <td>${msg.email}</td>
+                <td>${msg.message.substring(0, 50)}...</td>
+                <td>${new Date(msg.created_at).toLocaleDateString()}</td>
+                <td><button class="btn btn-sm btn-outline"><i class="fas fa-trash"></i></button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (err) { console.error('Error fetching messages:', err); }
+}
+
+async function fetchHelpRequests() {
+    const tbody = document.getElementById('helpRequestsTableBody');
+    if (!tbody) return;
+    try {
+        const { data, error } = await window.supabaseClient.from('help_requests').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+        tbody.innerHTML = (data && data.length > 0) ? '' : '<tr><td colspan="6" class="text-center">لا توجد طلبات مساعدة</td></tr>';
+        data?.forEach(req => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${req.student_name}</strong></td>
+                <td>${req.student_email}</td>
+                <td>${req.subject}</td>
+                <td>${req.description.substring(0, 50)}...</td>
+                <td>${new Date(req.created_at).toLocaleDateString()}</td>
+                <td><span class="badge ${req.status === 'resolved' ? 'bg-success' : 'bg-warning'}">${req.status === 'resolved' ? 'تم الحل' : 'معلق'}</span></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (err) { console.error('Error fetching help requests:', err); }
+}
+
 /* =========================================
    I18N LOGIC FOR ADMIN
    ========================================= */
@@ -254,7 +402,10 @@ const adminTranslations = {
         "admin-user-email": "البريد الإلكتروني",
         "admin-user-phone": "رقم الهاتف (واتس آب)",
         "admin-user-status": "حالة الحساب",
-        "admin-save-student": "إضافة الطالب وتأكيد بياناته"
+        "admin-save-student": "إضافة الطالب وتأكيد بياناته",
+        "admin-nav-help": "طلبات المساعدة",
+        "admin-nav-news": "إدارة الأخبار",
+        "admin-nav-projects": "إدارة المشاريع"
     },
     "en": {
         "admin-nav-overview": "Overview Summary",
@@ -277,7 +428,10 @@ const adminTranslations = {
         "admin-user-email": "Email Address",
         "admin-user-phone": "Phone Number (WhatsApp)",
         "admin-user-status": "Account Status",
-        "admin-save-student": "Confirm & Add Student"
+        "admin-save-student": "Confirm & Add Student",
+        "admin-nav-help": "Help Requests",
+        "admin-nav-news": "Manage News",
+        "admin-nav-projects": "Manage Projects"
     }
 }
 
