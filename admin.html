@@ -2,612 +2,830 @@
 <html lang="ar" dir="rtl">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم الإدارية - mrcog-yemen.com</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لوحة الإدارة - MRCOG Yemen</title>
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap"
-        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
-    <!-- FontAwesome for Icons -->
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --danger: #dc2626;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --sidebar: #0f172a;
+            --sidebar-text: #e2e8f0;
+            --sidebar-active: #1e293b;
+            --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+            --radius: 16px;
+        }
 
-    <!-- Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        * {
+            box-sizing: border-box;
+        }
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="admin.css"> <!-- New dedicated styles for admin -->
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .auth-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.9);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            font-size: 18px;
+        }
+
+        .admin-layout {
+            display: none;
+            grid-template-columns: 270px 1fr;
+            min-height: 100vh;
+        }
+
+        .admin-sidebar {
+            background: var(--sidebar);
+            color: var(--sidebar-text);
+            padding: 24px 16px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .brand h2 {
+            margin: 0;
+            font-size: 20px;
+            color: white;
+        }
+
+        .user-profile {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 14px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+        }
+
+        .user-profile .name {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .user-profile .role {
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        .admin-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .admin-nav .nav-item {
+            border: none;
+            background: transparent;
+            color: var(--sidebar-text);
+            text-align: right;
+            padding: 12px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        .admin-nav .nav-item:hover,
+        .admin-nav .nav-item.active {
+            background: var(--sidebar-active);
+            color: white;
+        }
+
+        .logout-btn {
+            margin-top: 18px;
+            width: 100%;
+            background: rgba(220, 38, 38, 0.15);
+            color: #fecaca;
+            border: 1px solid rgba(220, 38, 38, 0.25);
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .admin-main {
+            padding: 24px;
+        }
+
+        .admin-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .admin-topbar .page-title {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .lang-switcher,
+        .sidebar-toggle {
+            border: 1px solid var(--border);
+            background: white;
+            padding: 10px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card,
+        .admin-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 18px;
+        }
+
+        .stat-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 15px;
+            color: var(--muted);
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .card-header h3 {
+            margin: 0;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 12px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-sm {
+            padding: 7px 10px;
+            font-size: 13px;
+        }
+
+        .search-input,
+        .form-control,
+        textarea,
+        select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 14px;
+            outline: none;
+            background: white;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th,
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid var(--border);
+            text-align: right;
+            vertical-align: top;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 14px;
+            background: #f8fafc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .bg-success {
+            background: rgba(22, 163, 74, 0.12);
+            color: var(--success);
+        }
+
+        .bg-warning {
+            background: rgba(245, 158, 11, 0.14);
+            color: #b45309;
+        }
+
+        .bg-danger {
+            background: rgba(220, 38, 38, 0.12);
+            color: var(--danger);
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .admin-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            z-index: 99999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .admin-modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 620px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 22px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--muted);
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 992px) {
+            .admin-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-sidebar {
+                position: fixed;
+                right: -100%;
+                top: 0;
+                width: 280px;
+                z-index: 999;
+                transition: 0.25s;
+            }
+
+            .admin-sidebar.open {
+                right: 0;
+            }
+
+            .cards-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 640px) {
+            .admin-main {
+                padding: 16px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-topbar .page-title {
+                font-size: 20px;
+            }
+        }
+    </style>
 </head>
 
-<body class="admin-body">
+<body>
 
-    <!-- Preloader/Auth Check (Simulated in JS) -->
     <div id="authOverlay" class="auth-overlay">
-        <div class="loader">جاري التحقق من الصلاحيات...</div>
+        جاري التحقق من صلاحيات الدخول...
     </div>
 
-    <!-- MAIN ADMIN LAYOUT -->
-    <div class="admin-layout" style="display: none;" id="adminLayout">
-
-        <!-- SIDEBAR -->
-        <aside class="admin-sidebar glass-panel">
-            <div class="sidebar-header">
-                <a href="index.html" class="logo">
-                    <span class="logo-text">MRCOG<span class="highlight">-Yemen</span></span>
-                </a>
-                <span class="badge admin-badge">لوحة الإدارة</span>
+    <div id="adminLayout" class="admin-layout">
+        <aside class="admin-sidebar">
+            <div class="brand">
+                <h2>MRCOG Admin</h2>
             </div>
 
-            <nav class="sidebar-nav">
-                <ul class="nav-list" id="adminTabs">
-                    <li class="nav-item active" data-target="overview">
-                        <i class="fas fa-chart-pie"></i> <span data-i18n="admin-nav-overview">نظرة عامة</span>
-                    </li>
-                    <li class="nav-item" data-target="courses">
-                        <i class="fas fa-book-medical"></i> <span data-i18n="admin-nav-courses">إدارة الكورسات</span>
-                    </li>
-                    <li class="nav-item" data-target="users">
-                        <i class="fas fa-users"></i> <span data-i18n="admin-nav-users">إدارة الطلاب</span>
-                    </li>
-                    <li class="nav-item" data-target="subscriptions">
-                        <i class="fas fa-file-invoice-dollar"></i> <span data-i18n="admin-nav-subs">إدارة
-                            الاشتراكات</span>
-                    </li>
-                    <li class="nav-item" data-target="doctor">
-                        <i class="fas fa-user-md"></i> <span data-i18n="admin-nav-doctor">المدرب / المحتوى</span>
-                    </li>
-                    <li class="nav-item" data-target="enquiries">
-                        <i class="fas fa-envelope-open-text"></i> <span
-                            data-i18n="admin-nav-enquiries">الاستفسارات</span>
-                    </li>
-                    <li class="nav-item" data-target="help-requests">
-                        <i class="fas fa-hands-helping"></i> <span data-i18n="admin-nav-help">طلبات المساعدة</span>
-                    </li>
-                    <li class="nav-item" data-target="news">
-                        <i class="fas fa-newspaper"></i> <span data-i18n="admin-nav-news">إدارة الأخبار</span>
-                    </li>
-                    <li class="nav-item" data-target="projects">
-                        <i class="fas fa-project-diagram"></i> <span data-i18n="admin-nav-projects">إدارة
-                            المشاريع</span>
-                    </li>
-                    <li class="nav-item" data-target="settings">
-                        <i class="fas fa-cogs"></i> <span data-i18n="admin-nav-settings">إعدادات المنصة</span>
-                    </li>
-                </ul>
+            <div class="user-profile">
+                <div class="name">Admin</div>
+                <div class="role">مدير المنصة</div>
+            </div>
+
+            <nav id="adminTabs" class="admin-nav">
+                <button class="nav-item active" data-target="overviewPane">
+                    <i class="fas fa-chart-line"></i> <span data-i18n="admin-nav-overview">نظرة عامة</span>
+                </button>
+                <button class="nav-item" data-target="coursesPane">
+                    <i class="fas fa-book"></i> <span data-i18n="admin-nav-courses">إدارة الكورسات</span>
+                </button>
+                <button class="nav-item" data-target="usersPane">
+                    <i class="fas fa-users"></i> <span data-i18n="admin-nav-users">إدارة الطلاب</span>
+                </button>
+                <button class="nav-item" data-target="newsPane">
+                    <i class="fas fa-newspaper"></i> <span data-i18n="admin-nav-news">إدارة الأخبار</span>
+                </button>
+                <button class="nav-item" data-target="projectsPane">
+                    <i class="fas fa-diagram-project"></i> <span data-i18n="admin-nav-projects">إدارة المشاريع</span>
+                </button>
+                <button class="nav-item" data-target="messagesPane">
+                    <i class="fas fa-envelope"></i> <span data-i18n="admin-nav-enquiries">الاستفسارات الواردة</span>
+                </button>
+                <button class="nav-item" data-target="helpPane">
+                    <i class="fas fa-life-ring"></i> <span data-i18n="admin-nav-help">طلبات المساعدة</span>
+                </button>
             </nav>
 
-            <div class="sidebar-footer">
-                <button class="btn btn-outline btn-block" id="logoutBtn" data-i18n="admin-logout">تسجيل الخروج</button>
-                <div class="lang-switch-admin mt-4 text-center">
-                    <a href="#" class="lang-switcher highlight under-link">English</a>
-                </div>
-            </div>
+            <button id="logoutBtn" class="logout-btn">
+                <i class="fas fa-right-from-bracket"></i>
+                <span data-i18n="admin-logout">تسجيل الخروج</span>
+            </button>
         </aside>
 
-        <!-- MAIN CONTENT AREA -->
         <main class="admin-main">
-            <!-- TOP BAR -->
-            <header class="admin-topbar glass-panel">
-                <div class="mobile-toggle" id="sidebarToggle">
-                    <i class="fas fa-bars"></i>
-                </div>
+            <div class="admin-topbar">
+                <h1 class="page-title" data-i18n="admin-title-overview">نظرة عامة / الإحصائيات</h1>
+
                 <div class="topbar-actions">
-                    <div class="user-profile">
-                        <div class="avatar">أ</div>
-                        <span class="name">المدير العام</span>
+                    <button id="sidebarToggle" class="sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="lang-switch-admin">
+                        <button class="lang-switcher">English</button>
                     </div>
                 </div>
-            </header>
+            </div>
 
-            <!-- TAB CONTENTS -->
-            <div class="admin-content-wrapper">
-
-                <!-- VIEW 1: OVERVIEW -->
-                <div class="tab-pane active" id="overview">
-                    <h2 class="page-title" data-i18n="admin-title-overview">نظرة عامة / الإحصائيات</h2>
-
-                    <!-- Stats Grid -->
-                    <div class="stats-grid">
-                        <div class="stat-card glass-hover">
-                            <div class="stat-icon primary-bg"><i class="fas fa-users"></i></div>
-                            <div class="stat-details">
-                                <h3 data-i18n="admin-stat-users">إجمالي الطلاب</h3>
-                                <p class="stat-number">1,245</p>
-                            </div>
-                        </div>
-                        <div class="stat-card glass-hover">
-                            <div class="stat-icon secondary-bg"><i class="fas fa-book-open"></i></div>
-                            <div class="stat-details">
-                                <h3 data-i18n="admin-stat-courses">الكورسات المفعلة</h3>
-                                <p class="stat-number">4</p>
-                            </div>
-                        </div>
-                        <div class="stat-card glass-hover">
-                            <div class="stat-icon highlight-bg"><i class="fas fa-graduation-cap"></i></div>
-                            <div class="stat-details">
-                                <h3 data-i18n="admin-stat-enroll">المسجلين اليوم</h3>
-                                <p class="stat-number">12</p>
-                            </div>
-                        </div>
-                        <div class="stat-card glass-hover">
-                            <div class="stat-icon dark-bg"><i class="fas fa-wallet"></i></div>
-                            <div class="stat-details">
-                                <h3 data-i18n="admin-stat-subs">الاشتراكات النشطة</h3>
-                                <p class="stat-number">890</p>
-                            </div>
-                        </div>
+            <section id="overviewPane" class="tab-pane active">
+                <div class="cards-grid">
+                    <div class="stat-card">
+                        <h3 data-i18n="admin-stat-users">إجمالي الطلاب</h3>
+                        <div class="value">--</div>
                     </div>
-
-                    <!-- Recent Activity Table -->
-                    <div class="card glass-panel mt-4">
-                        <div class="card-header">
-                            <h3 data-i18n="admin-activity">النشاط الأخير</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="admin-table">
-                                    <thead>
-                                        <tr>
-                                            <th>الطالب</th>
-                                            <th>الإجراء</th>
-                                            <th>الكورس</th>
-                                            <th>الوقت</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>أحمد صالح</td>
-                                            <td><span class="status pulse-success">اشتراك جديد</span></td>
-                                            <td>MRCOG Part 2 Crash</td>
-                                            <td>منذ ١٠ دقائق</td>
-                                        </tr>
-                                        <tr>
-                                            <td>د. سارة</td>
-                                            <td>تحديث بيانات</td>
-                                            <td>-</td>
-                                            <td>منذ ساعة</td>
-                                        </tr>
-                                        <tr>
-                                            <td>محمد ناصر</td>
-                                            <td><span class="status pulse-success">اشتراك جديد</span></td>
-                                            <td>Jan 2026 Regular</td>
-                                            <td>امس</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div class="stat-card">
+                        <h3 data-i18n="admin-stat-courses">الكورسات المفعلة</h3>
+                        <div class="value">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3 data-i18n="admin-stat-enroll">المسجلين اليوم</h3>
+                        <div class="value">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3 data-i18n="admin-stat-subs">الاشتراكات النشطة</h3>
+                        <div class="value">--</div>
                     </div>
                 </div>
 
-                <!-- VIEW 2: COURSES MANAGEMENT -->
-                <div class="tab-pane" id="courses">
-                    <div class="page-header d-flex justify-between align-center">
-                        <h2 class="page-title" data-i18n="admin-nav-courses">إدارة الكورسات</h2>
-                        <button class="btn btn-primary" onclick="openModal('courseModal')"><i class="fas fa-plus"></i>
-                            إضافة كورس جديد</button>
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3 data-i18n="admin-activity">النشاط الأخير</h3>
+                    </div>
+                    <p style="color: var(--muted); margin: 0;">
+                        يمكنك من هنا إدارة الطلاب والكورسات والأخبار والمشاريع والرسائل.
+                    </p>
+                </div>
+            </section>
+
+            <section id="coursesPane" class="tab-pane">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3>الكورسات</h3>
+                        <button class="btn btn-primary" onclick="openModal('courseModal')">
+                            <i class="fas fa-plus"></i> إضافة كورس
+                        </button>
                     </div>
 
-                    <div class="card glass-panel mt-4">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="admin-table">
-                                    <thead>
-                                        <tr>
-                                            <th>اسم الكورس</th>
-                                            <th>المدرب</th>
-                                            <th>السعر السنوي</th>
-                                            <th>الحالة</th>
-                                            <th>الإجراءات</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="coursesTableBody">
-                                        <!-- Will be populated via JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>اسم الكورس</th>
+                                    <th>المدرب</th>
+                                    <th>السعر</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="coursesTableBody">
+                                <tr>
+                                    <td colspan="5" class="text-center">جاري التحميل...</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+            </section>
 
-                <!-- VIEW 3: USERS / STUDENTS -->
-                <div class="tab-pane" id="users">
-                    <div class="page-header d-flex justify-between align-center">
-                        <h2 class="page-title" data-i18n="admin-nav-users">إدارة الطلاب</h2>
-                        <div class="search-box">
-                            <input type="text" class="form-control" placeholder="ابحث عن طالب..."
-                                data-i18n="admin-search-student">
-                            <i class="fas fa-search"></i>
-                        </div>
+            <section id="usersPane" class="tab-pane">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3>الطلاب</h3>
+                        <button class="btn btn-primary" onclick="openModal('addStudentModal')">
+                            <i class="fas fa-user-plus"></i>
+                            <span data-i18n="admin-add-student">أضف طالب جديد</span>
+                        </button>
                     </div>
 
-                    <div class="card glass-panel mt-4">
-                        <div class="card-body">
-                            <div class="filter-bar mb-3 justify-between align-center">
-                                <div>
-                                    <button class="btn btn-sm btn-secondary active">الكل</button>
-                                    <button class="btn btn-sm btn-outline">النشطين فقط</button>
-                                    <button class="btn btn-sm btn-outline">الموقوفين</button>
-                                </div>
-                                <button class="btn btn-sm btn-primary" onclick="openModal('addStudentModal')">
-                                    <i class="fas fa-user-plus"></i> <span data-i18n="admin-add-student">أضف طالب
-                                        جديد</span>
-                                </button>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="admin-table">
-                                    <thead>
-                                        <tr>
-                                            <th>الاسم</th>
-                                            <th>البريد الإلكتروني</th>
-                                            <th>الرقم</th>
-                                            <th>الكورسات المسجلة</th>
-                                            <th>حالة الحساب</th>
-                                            <th>الإجراءات</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="usersTableBody">
-                                        <!-- Will be populated via JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div style="margin-bottom: 14px;">
+                        <input class="search-input" type="text" placeholder="ابحث عن طالب..."
+                            data-i18n="admin-search-student" />
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="admin-user-name">اسم الطالب</th>
+                                    <th data-i18n="admin-user-email">البريد الإلكتروني</th>
+                                    <th data-i18n="admin-user-phone">رقم الهاتف</th>
+                                    <th>عدد الكورسات</th>
+                                    <th data-i18n="admin-user-status">حالة الحساب</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center">جاري التحميل...</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+            </section>
 
-                <!-- VIEW 4: SUBSCRIPTIONS -->
-                <!-- We will add the other views similarly -->
-                <div class="tab-pane" id="subscriptions">
-                    <h2 class="page-title" data-i18n="admin-nav-subs">إدارة الاشتراكات</h2>
-                    <p class="text-muted">هنا يتم تتبع تفاصيل الدفع ومنح الصلاحيات اليدوية (قبل ربط Stripe).</p>
-                    <!-- Simple list for now -->
-                    <div class="card glass-panel mt-4">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="admin-table">
-                                    <thead>
-                                        <tr>
-                                            <th>رقم الاشتراك</th>
-                                            <th>الطالب</th>
-                                            <th>الكورس</th>
-                                            <th>تاريخ الانتهاء</th>
-                                            <th>الحالة</th>
-                                            <th>تعديل الوصول</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>#SUB-9912</td>
-                                            <td>فاطمة علي</td>
-                                            <td>MRCOG Regular</td>
-                                            <td>20-07-2026</td>
-                                            <td><span class="badge bg-success">نشط</span></td>
-                                            <td><button class="btn btn-sm btn-outline"><i class="fas fa-ban"></i>
-                                                    إيقاف</button></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+            <section id="newsPane" class="tab-pane">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3>الأخبار</h3>
+                        <button class="btn btn-primary" onclick="openModal('newsModal')">
+                            <i class="fas fa-plus"></i> إضافة خبر
+                        </button>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>العنوان</th>
+                                    <th>التاريخ</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="newsTableBody">
+                                <tr>
+                                    <td colspan="4" class="text-center">جاري التحميل...</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+            </section>
 
-                <!-- VIEW 5: DOCTOR/CONTENT -->
-                <div class="tab-pane" id="doctor">
-                    <h2 class="page-title" data-i18n="admin-nav-doctor">المدرب والمحتوى</h2>
-                    <div class="card glass-panel mt-4">
-                        <div class="card-body">
-                            <form class="admin-form">
-                                <h3 class="mb-3">تحديث بيانات المدرب</h3>
-                                <div class="form-group">
-                                    <label>اسم المدرب (كما يظهر في الرئيسية)</label>
-                                    <input type="text" class="form-control" value="Led by Dr. أميرة الحميدي">
-                                </div>
-                                <div class="form-group">
-                                    <label>السيرة الذاتية (نبذة)</label>
-                                    <textarea class="form-control"
-                                        rows="4">استشارية أمراض النساء والتوليد وزميلة الكلية الملكية...</textarea>
-                                </div>
-                                <button type="button" class="btn btn-primary mt-3">حفظ البيانات</button>
-                            </form>
-                        </div>
+            <section id="projectsPane" class="tab-pane">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3>المشاريع</h3>
+                        <button class="btn btn-primary" onclick="openModal('projectModal')">
+                            <i class="fas fa-plus"></i> إضافة مشروع
+                        </button>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>اسم المشروع</th>
+                                    <th>الوصف</th>
+                                    <th>الرابط</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projectsTableBody">
+                                <tr>
+                                    <td colspan="4" class="text-center">جاري التحميل...</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+            </section>
 
-                <!-- VIEW 6: ENQUIRIES -->
-                <div class="tab-pane" id="enquiries">
-                    <h2 class="page-title" data-i18n="admin-nav-enquiries">الاستفسارات الواردة</h2>
-                    <p class="text-muted">طلبات الاتصال التي تصل من صفحة "اتصل بنا".</p>
-                    <div class="card glass-panel mt-4">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="admin-table">
-                                    <thead>
-                                        <tr>
-                                            <th>الاسم</th>
-                                            <th>البريد الإلكتروني</th>
-                                            <th>الرسالة</th>
-                                            <th>التاريخ</th>
-                                            <th>الإجراء</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="messagesTableBody">
-                                        <!-- Will be populated via JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+            <section id="messagesPane" class="tab-pane">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3>الاستفسارات الواردة</h3>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>الاسم</th>
+                                    <th>البريد</th>
+                                    <th>الرسالة</th>
+                                    <th>التاريخ</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="messagesTableBody">
+                                <tr>
+                                    <td colspan="5" class="text-center">جاري التحميل...</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+            </section>
 
-                <!-- VIEW 8: HELP REQUESTS -->
-                <div class="tab-pane" id="help-requests">
-                    <h2 class="page-title" data-i18n="admin-nav-help">طلبات المساعدة التقنية</h2>
-                    <p class="text-muted">الطلبات المرسلة عبر نموذج "طلب مساعدة".</p>
-                    <div class="card glass-panel mt-4">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="admin-table">
-                                    <thead>
-                                        <tr>
-                                            <th>الاسم</th>
-                                            <th>البريد الإلكتروني</th>
-                                            <th>الموضوع</th>
-                                            <th>الوصف</th>
-                                            <th>التاريخ</th>
-                                            <th>الحالة</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="helpRequestsTableBody">
-                                        <!-- Will be populated via JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+            <section id="helpPane" class="tab-pane">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3>طلبات المساعدة</h3>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>اسم الطالب</th>
+                                    <th>البريد</th>
+                                    <th>الموضوع</th>
+                                    <th>الوصف</th>
+                                    <th>التاريخ</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="helpRequestsTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center">جاري التحميل...</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-
-                <!-- VIEW 9: NEWS MANAGEMENT -->
-                <div class="tab-pane" id="news">
-                    <div class="page-header d-flex justify-between align-center">
-                        <h2 class="page-title" data-i18n="admin-nav-news">إدارة الأخبار</h2>
-                        <button class="btn btn-primary" onclick="openModal('newsModal')"><i class="fas fa-plus"></i>
-                            إضافة خبر جديد</button>
-                    </div>
-                    <div class="card glass-panel mt-4">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="admin-table">
-                                    <thead>
-                                        <tr>
-                                            <th>العنوان</th>
-                                            <th>التاريخ</th>
-                                            <th>الحالة</th>
-                                            <th>الإجراءات</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="newsTableBody">
-                                        <!-- Will be populated via JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- VIEW 10: PROJECTS MANAGEMENT -->
-                <div class="tab-pane" id="projects">
-                    <div class="page-header d-flex justify-between align-center">
-                        <h2 class="page-title" data-i18n="admin-nav-projects">إدارة المشاريع</h2>
-                        <button class="btn btn-primary" onclick="openModal('projectModal')"><i class="fas fa-plus"></i>
-                            إضافة مشروع جديد</button>
-                    </div>
-                    <div class="card glass-panel mt-4">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="admin-table">
-                                    <thead>
-                                        <tr>
-                                            <th>اسم المشروع</th>
-                                            <th>الوصف</th>
-                                            <th>الرابط</th>
-                                            <th>الإجراءات</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="projectsTableBody">
-                                        <!-- Will be populated via JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- VIEW 7: SETTINGS -->
-                <div class="tab-pane" id="settings">
-                    <h2 class="page-title" data-i18n="admin-nav-settings">إعدادات المنصة</h2>
-
-                    <div class="card glass-panel mt-4">
-                        <div class="card-header">
-                            <h3>معلومات التواصل والتذييل</h3>
-                        </div>
-                        <div class="card-body">
-                            <form class="admin-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>اسم المنصة</label>
-                                        <input type="text" class="form-control" value="mrcog-yemen.com">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>البريد الإلكتروني للإدارة</label>
-                                        <input type="email" class="form-control" value="Mohammednasher532@gmail.com">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>رقم هاتف 1 (واتساب)</label>
-                                        <input type="text" class="form-control" value="+967 718 103 626">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>رقم هاتف 2 (مكالمات)</label>
-                                        <input type="text" class="form-control" value="+967 774 939 168">
-                                    </div>
-                                </div>
-                                <div class="form-group mt-3">
-                                    <label>وصف التذييل (Footer)</label>
-                                    <textarea class="form-control"
-                                        rows="3">منصتك الأولى للتحضير لامتحانات الزمالة البريطانية...</textarea>
-                                </div>
-                                <button type="button" class="btn btn-primary mt-4">تحديث الإعدادات</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-            </div> <!-- End Content Wrapper -->
+            </section>
         </main>
     </div>
 
-    <!-- MODALS ZONE -->
-
-    <!-- Course Modal -->
     <div id="courseModal" class="admin-modal">
-        <div class="modal-content glass-panel">
+        <div class="modal-content">
             <div class="modal-header">
-                <h3>إضافة كورس جديد</h3>
-                <span class="close-modal" onclick="closeModal('courseModal')">&times;</span>
+                <h3>إضافة كورس</h3>
+                <button class="close-btn" onclick="closeModal('courseModal')">&times;</button>
             </div>
-            <div class="modal-body">
-                <form id="courseForm">
-                    <div class="form-group">
-                        <label>عنوان الكورس</label>
-                        <input type="text" class="form-control" id="courseName" required>
-                    </div>
-                    <div class="form-group">
-                        <label>نوع الكورس</label>
-                        <select class="form-control" id="courseType">
-                            <option value="Regular">منتظم (Regular)</option>
-                            <option value="Crash">مكثف (Crash)</option>
-                            <option value="Revision">مراجعة (Revision)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>السعر السنوي ($)</label>
-                        <input type="number" class="form-control" id="coursePrice" required>
-                    </div>
-                    <div class="form-group mt-4 text-left">
-                        <button type="button" class="btn btn-outline" onclick="closeModal('courseModal')">إلغاء</button>
-                        <button type="submit" class="btn btn-primary">حفظ الكورس</button>
-                    </div>
-                </form>
-            </div>
+
+            <form id="courseForm">
+                <div class="form-group">
+                    <label>اسم الكورس</label>
+                    <input type="text" id="courseName" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label>نوع الكورس</label>
+                    <select id="courseType" class="form-control" required>
+                        <option value="Regular">Regular</option>
+                        <option value="Crash">Crash</option>
+                        <option value="Revision">Revision</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>السعر</label>
+                    <input type="number" id="coursePrice" class="form-control" required />
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('courseModal')">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ الكورس</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- User Modal (Edit details) -->
-    <div id="userModal" class="admin-modal">
-        <div class="modal-content glass-panel">
-            <div class="modal-header">
-                <h3>تحديث بيانات الطالب</h3>
-                <span class="close-modal" onclick="closeModal('userModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <p class="text-muted">جاري تحميل البيانات...</p>
-                <button type="button" class="btn btn-outline mt-3" onclick="closeModal('userModal')">اغلاق</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add New Student Modal -->
-    <div class="admin-modal" id="addStudentModal">
-        <div class="modal-content glass-panel">
+    <div id="addStudentModal" class="admin-modal">
+        <div class="modal-content">
             <div class="modal-header">
                 <h3 data-i18n="admin-add-student">أضف طالب جديد</h3>
-                <span class="close-modal" onclick="closeModal('addStudentModal')">&times;</span>
+                <button class="close-btn" onclick="closeModal('addStudentModal')">&times;</button>
             </div>
-            <div class="modal-body admin-form">
-                <form id="addStudentForm">
-                    <div class="form-group">
-                        <label data-i18n="admin-user-name">اسم الطالب</label>
-                        <input type="text" class="form-control" id="newStudentName" required>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="admin-user-email">البريد الإلكتروني</label>
-                        <input type="email" class="form-control" id="newStudentEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="admin-user-phone">رقم الهاتف (واتس آب)</label>
-                        <input type="tel" class="form-control" id="newStudentPhone" required>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="admin-user-status">حالة الحساب</label>
-                        <select class="form-control" id="newStudentStatus">
-                            <option value="نشط">نشط</option>
-                            <option value="غير نشط">غير نشط</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 mt-3" data-i18n="admin-save-student">إضافة الطالب
-                        وتأكيد بياناته</button>
-                </form>
-            </div>
+
+            <form id="addStudentForm">
+                <div class="form-group">
+                    <label data-i18n="admin-user-name">اسم الطالب</label>
+                    <input type="text" id="newStudentName" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="admin-user-email">البريد الإلكتروني</label>
+                    <input type="email" id="newStudentEmail" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="admin-user-phone">رقم الهاتف</label>
+                    <input type="text" id="newStudentPhone" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="admin-user-status">حالة الحساب</label>
+                    <select id="newStudentStatus" class="form-control">
+                        <option value="نشط">نشط</option>
+                        <option value="غير نشط">غير نشط</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('addStudentModal')">إلغاء</button>
+                    <button type="submit" class="btn btn-primary" data-i18n="admin-save-student">إضافة الطالب وتأكيد
+                        بياناته</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- News Modal -->
     <div id="newsModal" class="admin-modal">
-        <div class="modal-content glass-panel">
+        <div class="modal-content">
             <div class="modal-header">
-                <h3>إضافة خبر جديد</h3>
-                <span class="close-modal" onclick="closeModal('newsModal')">&times;</span>
+                <h3>إضافة خبر</h3>
+                <button class="close-btn" onclick="closeModal('newsModal')">&times;</button>
             </div>
-            <div class="modal-body admin-form">
-                <form id="newsForm">
-                    <div class="form-group">
-                        <label>عنوان الخبر</label>
-                        <input type="text" class="form-control" id="newsTitle" required>
-                    </div>
-                    <div class="form-group">
-                        <label>المحتوى</label>
-                        <textarea class="form-control" id="newsContent" rows="5" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block mt-3">حفظ الخبر</button>
-                </form>
-            </div>
+
+            <form id="newsForm">
+                <div class="form-group">
+                    <label>عنوان الخبر</label>
+                    <input type="text" id="newsTitle" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label>محتوى الخبر</label>
+                    <textarea id="newsContent" class="form-control" required></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('newsModal')">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ الخبر</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- Project Modal -->
     <div id="projectModal" class="admin-modal">
-        <div class="modal-content glass-panel">
+        <div class="modal-content">
             <div class="modal-header">
-                <h3>إضافة مشروع جديد</h3>
-                <span class="close-modal" onclick="closeModal('projectModal')">&times;</span>
+                <h3>إضافة مشروع</h3>
+                <button class="close-btn" onclick="closeModal('projectModal')">&times;</button>
             </div>
-            <div class="modal-body admin-form">
-                <form id="projectForm">
-                    <div class="form-group">
-                        <label>اسم المشروع</label>
-                        <input type="text" class="form-control" id="projectName" required>
-                    </div>
-                    <div class="form-group">
-                        <label>وصف المشروع</label>
-                        <textarea class="form-control" id="projectDesc" rows="3" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>رابط المشروع</label>
-                        <input type="url" class="form-control" id="projectLink">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block mt-3">حفظ المشروع</button>
-                </form>
-            </div>
+
+            <form id="projectForm">
+                <div class="form-group">
+                    <label>اسم المشروع</label>
+                    <input type="text" id="projectName" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label>وصف المشروع</label>
+                    <textarea id="projectDesc" class="form-control" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>رابط المشروع</label>
+                    <input type="url" id="projectLink" class="form-control" />
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('projectModal')">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ المشروع</button>
+                </div>
+            </form>
         </div>
     </div>
 
+    <div id="userModal" class="admin-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>إدارة الحساب</h3>
+                <button class="close-btn" onclick="closeModal('userModal')">&times;</button>
+            </div>
+            <p style="margin: 0; color: var(--muted);">
+                هذه النافذة جاهزة للتطوير لاحقًا لإدارة حسابات الطلاب.
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script src="admin.js"></script>
 </body>
