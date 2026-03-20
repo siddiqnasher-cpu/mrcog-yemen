@@ -246,7 +246,8 @@
         .search-input,
         .form-control,
         textarea,
-        select {
+        select,
+        input[type="file"] {
             width: 100%;
             border: 1px solid var(--border);
             border-radius: 12px;
@@ -868,8 +869,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label>رابط الفيديو</label>
-                    <input type="url" id="lessonVideoUrl" class="form-control" required />
+                    <label>ملف الفيديو</label>
+                    <input type="file" id="lessonVideoFile" class="form-control" accept="video/*" required />
                 </div>
 
                 <div class="form-group">

@@ -99,6 +99,13 @@ function safeText(value) {
     return value ?? '-';
 }
 
+function sanitizeFileName(fileName) {
+    return fileName
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9.\-_]/g, '');
+}
+
 /* =========================================
    DATA LOADERS
    ========================================= */
@@ -137,7 +144,9 @@ async function populateCoursesTable() {
                 <td>$${safeText(course.price)}</td>
                 <td><span class="badge ${badgeClass}">${safeText(course.status)}</span></td>
                 <td>
-                    <button class="btn btn-sm btn-outline" style="color:var(--danger)" onclick="deleteCourse(${course.id})"><i class="fas fa-trash"></i></button>
+                    <button class="btn btn-sm btn-outline" style="color:var(--danger)" onclick="deleteCourse(${course.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -183,7 +192,9 @@ async function populateUsersTable() {
                 <td>${safeText(user.courses)}</td>
                 <td><span class="badge ${badgeClass}">${safeText(user.status)}</span></td>
                 <td>
-                    <button class="btn btn-sm btn-outline" style="color:var(--danger)" onclick="deleteStudent(${user.id})"><i class="fas fa-trash"></i></button>
+                    <button class="btn btn-sm btn-outline" style="color:var(--danger)" onclick="deleteStudent(${user.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -224,7 +235,11 @@ async function fetchNews() {
                 <td><strong>${safeText(item.title)}</strong></td>
                 <td>${formatDate(item.created_at)}</td>
                 <td><span class="badge ${item.is_published ? 'bg-success' : 'bg-warning'}">${item.is_published ? 'منشور' : 'مسودة'}</span></td>
-                <td><button class="btn btn-sm btn-outline" style="color:var(--danger)" onclick="deleteNews(${item.id})"><i class="fas fa-trash"></i></button></td>
+                <td>
+                    <button class="btn btn-sm btn-outline" style="color:var(--danger)" onclick="deleteNews(${item.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
             `;
             tbody.appendChild(tr);
         });
@@ -264,7 +279,11 @@ async function fetchProjects() {
                 <td><strong>${safeText(item.name)}</strong></td>
                 <td>${item.description ? item.description.substring(0, 50) : '-'}${item.description && item.description.length > 50 ? '...' : ''}</td>
                 <td><a href="${item.link || '#'}" target="_blank">${item.link ? 'رابط' : '-'}</a></td>
-                <td><button class="btn btn-sm btn-outline" style="color:var(--danger)" onclick="deleteProject(${item.id})"><i class="fas fa-trash"></i></button></td>
+                <td>
+                    <button class="btn btn-sm btn-outline" style="color:var(--danger)" onclick="deleteProject(${item.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
             `;
             tbody.appendChild(tr);
         });
@@ -305,7 +324,11 @@ async function fetchMessages() {
                 <td>${safeText(msg.email)}</td>
                 <td>${msg.message ? msg.message.substring(0, 50) : '-'}${msg.message && msg.message.length > 50 ? '...' : ''}</td>
                 <td>${formatDate(msg.created_at)}</td>
-                <td><button class="btn btn-sm btn-outline" style="color:var(--danger)" onclick="deleteMessage(${msg.id})"><i class="fas fa-trash"></i></button></td>
+                <td>
+                    <button class="btn btn-sm btn-outline" style="color:var(--danger)" onclick="deleteMessage(${msg.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
             `;
             tbody.appendChild(tr);
         });
@@ -359,12 +382,17 @@ async function fetchHelpRequests() {
 
 async function loadCoursesIntoLessonSelect() {
     const select = document.getElementById('lessonCourseId');
-    if (!select || !window.supabaseClient) return;
+    if (!select) return;
+
+    if (!window.supabaseClient) {
+        select.innerHTML = '<option value="">Supabase غير متصل</option>';
+        return;
+    }
 
     try {
         const { data, error } = await window.supabaseClient
             .from('courses')
-            .select('id, name')
+            .select('*')
             .order('created_at', { ascending: false });
 
         if (error) throw error;
@@ -379,7 +407,7 @@ async function loadCoursesIntoLessonSelect() {
         data.forEach(course => {
             const option = document.createElement('option');
             option.value = course.id;
-            option.textContent = course.name;
+            option.textContent = course.name || `Course #${course.id}`;
             select.appendChild(option);
         });
     } catch (err) {
@@ -400,15 +428,7 @@ async function fetchLessons() {
     try {
         const { data, error } = await window.supabaseClient
             .from('course_lessons')
-            .select(`
-                id,
-                title,
-                video_url,
-                lesson_order,
-                is_free,
-                course_id,
-                courses(name)
-            `)
+            .select('*')
             .order('lesson_order', { ascending: true });
 
         if (error) throw error;
@@ -423,9 +443,9 @@ async function fetchLessons() {
         data.forEach(item => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><strong>${item.courses?.name || '-'}</strong></td>
+                <td><strong>${item.course_id ?? '-'}</strong></td>
                 <td>${item.title || '-'}</td>
-                <td>${item.video_url ? `<a href="${item.video_url}" target="_blank">فتح الرابط</a>` : '-'}</td>
+                <td>${item.video_url ? `<a href="${item.video_url}" target="_blank">فتح الفيديو</a>` : '-'}</td>
                 <td>${item.lesson_order ?? '-'}</td>
                 <td><span class="badge ${item.is_free ? 'bg-success' : 'bg-warning'}">${item.is_free ? 'مجاني' : 'مدفوع'}</span></td>
                 <td>
@@ -621,36 +641,74 @@ document.getElementById('lessonForm')?.addEventListener('submit', async function
 
     const courseId = document.getElementById('lessonCourseId').value;
     const title = document.getElementById('lessonTitle').value;
-    const videoUrl = document.getElementById('lessonVideoUrl').value;
     const lessonOrder = document.getElementById('lessonOrder').value;
     const isFree = document.getElementById('lessonIsFree').value === 'true';
+    const videoFileInput = document.getElementById('lessonVideoFile');
+    const videoFile = videoFileInput?.files?.[0];
 
     if (!window.supabaseClient) {
         alert("خطأ: Supabase غير متصل.");
         return;
     }
 
+    if (!courseId) {
+        alert("يرجى اختيار الكورس.");
+        return;
+    }
+
+    if (!title) {
+        alert("يرجى إدخال عنوان الدرس.");
+        return;
+    }
+
+    if (!videoFile) {
+        alert("يرجى اختيار ملف الفيديو.");
+        return;
+    }
+
     try {
-        const { error } = await window.supabaseClient
+        const safeName = sanitizeFileName(videoFile.name);
+        const filePath = `course-${courseId}/${Date.now()}-${safeName}`;
+
+        const { error: uploadError } = await window.supabaseClient.storage
+            .from('course-videos')
+            .upload(filePath, videoFile, {
+                cacheControl: '3600',
+                upsert: false,
+                contentType: videoFile.type
+            });
+
+        if (uploadError) throw uploadError;
+
+        const { data: publicUrlData } = window.supabaseClient.storage
+            .from('course-videos')
+            .getPublicUrl(filePath);
+
+        const publicUrl = publicUrlData?.publicUrl;
+
+        if (!publicUrl) {
+            throw new Error('تعذر إنشاء رابط الفيديو بعد الرفع.');
+        }
+
+        const { error: insertError } = await window.supabaseClient
             .from('course_lessons')
             .insert([{
                 course_id: Number(courseId),
                 title: title,
-                video_url: videoUrl,
+                video_url: publicUrl,
                 lesson_order: Number(lessonOrder || 1),
                 is_free: isFree
             }]);
 
-        if (error) throw error;
+        if (insertError) throw insertError;
 
         closeModal('lessonModal');
         this.reset();
         await fetchLessons();
-        await loadCoursesIntoLessonSelect();
-        alert("تمت إضافة الفيديو بنجاح!");
+        alert("تم رفع الفيديو وحفظه بنجاح!");
     } catch (err) {
         console.error(err);
-        alert("حدث خطأ أثناء حفظ الفيديو: " + (err.message || err));
+        alert("حدث خطأ أثناء رفع الفيديو: " + (err.message || err));
     }
 });
 
