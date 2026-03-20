@@ -1,25 +1,30 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>mrcog-yemen.com - اجتز امتحانك بنجاح</title>
-    <meta name="description" content="كورسات تحضيرية لامتحان MRCOG. احصل على أفضل المحاضرات والمواد التعليمية لاجتياز الامتحان بنجاح.">
-    
+    <meta name="description"
+        content="كورسات تحضيرية لامتحان MRCOG. احصل على أفضل المحاضرات والمواد التعليمية لاجتياز الامتحان بنجاح.">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
-    
+
     <!-- FontAwesome Hooks -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    
+
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
+
 <body>
 
     <!-- Header Section -->
@@ -36,7 +41,8 @@
                 <a href="#" class="btn-help-modal" onclick="openHelpModal()" data-i18n="nav-help">طلب مساعدة</a>
             </nav>
             <div class="nav-actions">
-                <button class="lang-switcher btn btn-secondary" style="padding: 5px 15px; font-size: 0.9rem; margin: 0 5px;">English</button>
+                <button class="lang-switcher btn btn-secondary"
+                    style="padding: 5px 15px; font-size: 0.9rem; margin: 0 5px;">English</button>
                 <a href="login.html" class="btn btn-outline" data-i18n="nav-login">تسجيل الدخول</a>
                 <a href="#courses" class="btn btn-primary" data-i18n="nav-subscribe">اشترك الآن</a>
             </div>
@@ -52,9 +58,13 @@
         <div class="container hero-container">
             <div class="hero-content">
                 <div class="badge" data-i18n="hero-badge">الخيار الأول للنجاح <span class="badge-icon">🌟</span></div>
-                <h1 class="hero-title" data-i18n="hero-title">تفوق في امتحان <span class="gradient-text">MRCOG</span> بكل ثقة</h1>
-                <h3 class="instructor-name" style="color: var(--primary-color); font-size: 1.4rem; margin-bottom: 15px; font-weight: 700;" data-i18n="hero-instructor">Led by Dr. أميرة الحميدي</h3>
-                <p class="hero-subtitle" data-i18n="hero-subtitle">احصلي على أفضل الكورسات، المحاضرات المباشرة، والمذكرات التي تحتاجينها لاجتياز امتحان الزمالة البريطانية في أمراض النساء والتوليد.</p>
+                <h1 class="hero-title" data-i18n="hero-title">تفوق في امتحان <span class="gradient-text">MRCOG</span>
+                    بكل ثقة</h1>
+                <h3 class="instructor-name"
+                    style="color: var(--primary-color); font-size: 1.4rem; margin-bottom: 15px; font-weight: 700;"
+                    data-i18n="hero-instructor">Led by Dr. أميرة الحميدي</h3>
+                <p class="hero-subtitle" data-i18n="hero-subtitle">احصلي على أفضل الكورسات، المحاضرات المباشرة،
+                    والمذكرات التي تحتاجينها لاجتياز امتحان الزمالة البريطانية في أمراض النساء والتوليد.</p>
                 <div class="hero-buttons">
                     <a href="#courses" class="btn btn-primary btn-large" data-i18n="hero-btn-browse">تصفح الكورسات</a>
                     <a href="#contact" class="btn btn-secondary btn-large" data-i18n="hero-btn-contact">تواصل معنا</a>
@@ -64,7 +74,11 @@
                 <div class="image-wrapper glass-panel">
                     <!-- Placeholder using a CSS gradient for now -->
                     <div class="image-placeholder">
-                        <svg viewBox="0 0 24 24" width="80" height="80" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="hero-icon"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+                        <svg viewBox="0 0 24 24" width="80" height="80" stroke="currentColor" stroke-width="2"
+                            fill="none" stroke-linecap="round" stroke-linejoin="round" class="hero-icon">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                        </svg>
                     </div>
                 </div>
                 <!-- Floating elements for dynamic feel -->
@@ -84,10 +98,11 @@
     <section id="courses" class="courses section-padding bg-light">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title" data-i18n="section-courses-title">الكورسات <span class="highlight">المتاحة</span></h2>
+                <h2 class="section-title" data-i18n="section-courses-title">الكورسات <span
+                        class="highlight">المتاحة</span></h2>
                 <p class="section-desc" data-i18n="section-courses-desc">اختر الكورس الأنسب لك للبدء في رحلة نجاحك.</p>
             </div>
-            
+
             <div class="course-grid">
                 <!-- Course Card 1 -->
                 <div class="course-card glass-hover">
@@ -157,7 +172,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Jan 2026 Regular -->
             <div class="course-grid mt-4">
                 <div class="course-card glass-hover">
@@ -176,7 +191,7 @@
                         </ul>
                     </div>
                     <div class="card-footer">
-                         <a href="#" class="btn btn-primary btn-block" data-i18n="btn-subscribe">اشترك الآن</a>
+                        <a href="#" class="btn btn-primary btn-block" data-i18n="btn-subscribe">اشترك الآن</a>
                     </div>
                 </div>
             </div>
@@ -187,13 +202,16 @@
     <section class="testimonials section-padding">
         <div class="container">
             <div class="section-header text-center">
-                <h2 class="section-title" data-i18n="section-testimonials-title">ماذا يقول <span class="highlight">المشتركون؟</span></h2>
-                <p class="section-desc" data-i18n="section-testimonials-desc">تجارب حقيقية من طلاب اجتازوا الامتحان بنجاح.</p>
+                <h2 class="section-title" data-i18n="section-testimonials-title">ماذا يقول <span
+                        class="highlight">المشتركون؟</span></h2>
+                <p class="section-desc" data-i18n="section-testimonials-desc">تجارب حقيقية من طلاب اجتازوا الامتحان
+                    بنجاح.</p>
             </div>
             <div class="testimonial-grid">
                 <div class="testimonial-card glass">
                     <div class="stars">⭐⭐⭐⭐⭐</div>
-                    <p class="quote" data-i18n="testim-1">"كورس ممتاز جداً، المحاضرون متمكنون والمادة العلمية شاملة ووافية. ساعدني كثيراً في اجتياز الجزء الثاني من أول محاولة!"</p>
+                    <p class="quote" data-i18n="testim-1">"كورس ممتاز جداً، المحاضرون متمكنون والمادة العلمية شاملة
+                        ووافية. ساعدني كثيراً في اجتياز الجزء الثاني من أول محاولة!"</p>
                     <div class="author">
                         <div class="avatar">د.</div>
                         <div class="info">
@@ -204,7 +222,8 @@
                 </div>
                 <div class="testimonial-card glass">
                     <div class="stars">⭐⭐⭐⭐⭐</div>
-                    <p class="quote" data-i18n="testim-2">"منصة رائعة والدعم الفني عبر الواتساب متجاوب جداً. الامتحانات التجريبية كانت قريبة جداً من الامتحان الحقيقي."</p>
+                    <p class="quote" data-i18n="testim-2">"منصة رائعة والدعم الفني عبر الواتساب متجاوب جداً. الامتحانات
+                        التجريبية كانت قريبة جداً من الامتحان الحقيقي."</p>
                     <div class="author">
                         <div class="avatar">د.</div>
                         <div class="info">
@@ -221,10 +240,11 @@
     <section id="faq" class="faq section-padding bg-light">
         <div class="container">
             <div class="section-header text-center">
-                <h2 class="section-title" data-i18n="section-faq-title">الأسئلة <span class="highlight">الشائعة</span></h2>
+                <h2 class="section-title" data-i18n="section-faq-title">الأسئلة <span class="highlight">الشائعة</span>
+                </h2>
                 <p class="section-desc" data-i18n="section-faq-desc">كل ما تحتاج لمعرفته حول كورساتنا وطرق الاشتراك.</p>
             </div>
-            
+
             <div class="faq-container">
                 <!-- FAQ Item 1 -->
                 <div class="faq-item glass">
@@ -233,7 +253,8 @@
                         <span class="faq-icon">+</span>
                     </div>
                     <div class="faq-answer">
-                        <p data-i18n="faq-a1">نعم، نبدأ من الأساسيات ونوفر خطط مذاكرة متكاملة تناسب جميع المستويات للوصول بك إلى الجاهزية التامة للامتحان.</p>
+                        <p data-i18n="faq-a1">نعم، نبدأ من الأساسيات ونوفر خطط مذاكرة متكاملة تناسب جميع المستويات
+                            للوصول بك إلى الجاهزية التامة للامتحان.</p>
                     </div>
                 </div>
 
@@ -244,7 +265,8 @@
                         <span class="faq-icon">+</span>
                     </div>
                     <div class="faq-answer">
-                        <p data-i18n="faq-a2">بالتأكيد، يتم تسجيل جميع المحاضرات المباشرة وتوفيرها على المنصة لتتمكن من مشاهدتها في أي وقت يناسبك.</p>
+                        <p data-i18n="faq-a2">بالتأكيد، يتم تسجيل جميع المحاضرات المباشرة وتوفيرها على المنصة لتتمكن من
+                            مشاهدتها في أي وقت يناسبك.</p>
                     </div>
                 </div>
 
@@ -255,10 +277,11 @@
                         <span class="faq-icon">+</span>
                     </div>
                     <div class="faq-answer">
-                        <p data-i18n="faq-a3">نوفر عدة طرق للدفع تشمل البطاقات الائتمانية، التحويل البنكي، والدفع عبر محافظ الهاتف المحمول. يمكنك اختيار الطريقة الأنسب لك أثناء التسجيل.</p>
+                        <p data-i18n="faq-a3">نوفر عدة طرق للدفع تشمل البطاقات الائتمانية، التحويل البنكي، والدفع عبر
+                            محافظ الهاتف المحمول. يمكنك اختيار الطريقة الأنسب لك أثناء التسجيل.</p>
                     </div>
                 </div>
-                
+
                 <!-- FAQ Item 4 -->
                 <div class="faq-item glass">
                     <div class="faq-question">
@@ -266,7 +289,8 @@
                         <span class="faq-icon">+</span>
                     </div>
                     <div class="faq-answer">
-                        <p data-i18n="faq-a4">نعم، نوفر دعماً مستمراً عبر مجموعات الواتساب للرد على جميع استفساراتك العلمية والتقنية على مدار الساعة طوال فترة الكورس.</p>
+                        <p data-i18n="faq-a4">نعم، نوفر دعماً مستمراً عبر مجموعات الواتساب للرد على جميع استفساراتك
+                            العلمية والتقنية على مدار الساعة طوال فترة الكورس.</p>
                     </div>
                 </div>
             </div>
@@ -282,7 +306,12 @@
                 <div class="cta-actions">
                     <a href="#" class="btn btn-primary btn-large" data-i18n="cta-btn-join">انضم إلينا الآن</a>
                     <a href="https://wa.me/967718103626" class="btn btn-whatsapp btn-large">
-                        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2"
+                            fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
+                            </path>
+                        </svg>
                         <span data-i18n="cta-btn-wa">واتساب: +967 718 103 626</span>
                     </a>
                 </div>
@@ -323,7 +352,8 @@
                 <h2 class="section-title">أرسل لنا <span class="highlight">رسالة</span></h2>
                 <p class="section-desc">اترك لنا استفسارك وسنعاود الاتصال بك في أقرب وقت.</p>
             </div>
-            <div class="contact-form-wrapper glass-panel" style="max-width: 700px; margin: 0 auto; padding: 40px; border-radius: var(--radius-lg);">
+            <div class="contact-form-wrapper glass-panel"
+                style="max-width: 700px; margin: 0 auto; padding: 40px; border-radius: var(--radius-lg);">
                 <form id="contactForm" class="admin-form">
                     <div class="form-row">
                         <div class="form-group">
@@ -332,12 +362,14 @@
                         </div>
                         <div class="form-group">
                             <label for="contact-email">البريد الإلكتروني</label>
-                            <input type="email" id="contact-email" class="form-control" placeholder="أدخل بريدك الإلكتروني" required>
+                            <input type="email" id="contact-email" class="form-control"
+                                placeholder="أدخل بريدك الإلكتروني" required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="contact-message">الرسالة</label>
-                        <textarea id="contact-message" class="form-control" rows="5" placeholder="اكتب رسالتك هنا..." required></textarea>
+                        <textarea id="contact-message" class="form-control" rows="5" placeholder="اكتب رسالتك هنا..."
+                            required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block btn-large mt-3">إرسال الرسالة</button>
                 </form>
@@ -346,11 +378,15 @@
     </section>
 
     <!-- Help Request Modal -->
-    <div id="helpModal" class="admin-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
-        <div class="modal-content glass-panel" style="max-width: 500px; width: 90%; background: white; border-radius: var(--radius-lg); padding: 0; overflow: hidden;">
-            <div class="modal-header" style="padding: 20px 30px; background: var(--bg-light); border-bottom: 1px solid var(--admin-border); display: flex; justify-content: space-between; align-items: center;">
+    <div id="helpModal" class="admin-modal"
+        style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+        <div class="modal-content glass-panel"
+            style="max-width: 500px; width: 90%; background: white; border-radius: var(--radius-lg); padding: 0; overflow: hidden;">
+            <div class="modal-header"
+                style="padding: 20px 30px; background: var(--bg-light); border-bottom: 1px solid var(--admin-border); display: flex; justify-content: space-between; align-items: center;">
                 <h3 style="margin: 0;">طلب مساعدة تقنية</h3>
-                <span class="close-modal" onclick="closeHelpModal()" style="cursor: pointer; font-size: 1.5rem;">&times;</span>
+                <span class="close-modal" onclick="closeHelpModal()"
+                    style="cursor: pointer; font-size: 1.5rem;">&times;</span>
             </div>
             <div class="modal-body" style="padding: 30px;">
                 <form id="helpRequestForm">
@@ -381,8 +417,10 @@
         <div class="container footer-container">
             <div class="footer-about">
                 <h3>mrcog-yemen.com</h3>
-                <h4 style="color: var(--secondary-light); margin-bottom: 15px; font-size: 1.1rem;" data-i18n="footer-about-title">Led by Dr. أميرة الحميدي</h4>
-                <p data-i18n="footer-about-desc">منصتك الأولى للتحضير لامتحانات الزمالة البريطانية في أمراض النساء والتوليد. نقدم كورسات شاملة مع نخبة من أفضل المحاضرين.</p>
+                <h4 style="color: var(--secondary-light); margin-bottom: 15px; font-size: 1.1rem;"
+                    data-i18n="footer-about-title">Led by Dr. أميرة الحميدي</h4>
+                <p data-i18n="footer-about-desc">منصتك الأولى للتحضير لامتحانات الزمالة البريطانية في أمراض النساء
+                    والتوليد. نقدم كورسات شاملة مع نخبة من أفضل المحاضرين.</p>
             </div>
             <div class="footer-links">
                 <h4 data-i18n="footer-links-title">روابط سريعة</h4>
@@ -413,4 +451,5 @@
     <script src="supabase-config.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>

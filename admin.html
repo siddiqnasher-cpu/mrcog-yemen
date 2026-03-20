@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم الإدارية - mrcog-yemen.com</title>
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
     <!-- FontAwesome for Icons -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
@@ -20,6 +23,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="admin.css"> <!-- New dedicated styles for admin -->
 </head>
+
 <body class="admin-body">
 
     <!-- Preloader/Auth Check (Simulated in JS) -->
@@ -29,7 +33,7 @@
 
     <!-- MAIN ADMIN LAYOUT -->
     <div class="admin-layout" style="display: none;" id="adminLayout">
-        
+
         <!-- SIDEBAR -->
         <aside class="admin-sidebar glass-panel">
             <div class="sidebar-header">
@@ -38,7 +42,7 @@
                 </a>
                 <span class="badge admin-badge">لوحة الإدارة</span>
             </div>
-            
+
             <nav class="sidebar-nav">
                 <ul class="nav-list" id="adminTabs">
                     <li class="nav-item active" data-target="overview">
@@ -51,13 +55,15 @@
                         <i class="fas fa-users"></i> <span data-i18n="admin-nav-users">إدارة الطلاب</span>
                     </li>
                     <li class="nav-item" data-target="subscriptions">
-                        <i class="fas fa-file-invoice-dollar"></i> <span data-i18n="admin-nav-subs">إدارة الاشتراكات</span>
+                        <i class="fas fa-file-invoice-dollar"></i> <span data-i18n="admin-nav-subs">إدارة
+                            الاشتراكات</span>
                     </li>
                     <li class="nav-item" data-target="doctor">
                         <i class="fas fa-user-md"></i> <span data-i18n="admin-nav-doctor">المدرب / المحتوى</span>
                     </li>
                     <li class="nav-item" data-target="enquiries">
-                        <i class="fas fa-envelope-open-text"></i> <span data-i18n="admin-nav-enquiries">الاستفسارات</span>
+                        <i class="fas fa-envelope-open-text"></i> <span
+                            data-i18n="admin-nav-enquiries">الاستفسارات</span>
                     </li>
                     <li class="nav-item" data-target="help-requests">
                         <i class="fas fa-hands-helping"></i> <span data-i18n="admin-nav-help">طلبات المساعدة</span>
@@ -66,14 +72,15 @@
                         <i class="fas fa-newspaper"></i> <span data-i18n="admin-nav-news">إدارة الأخبار</span>
                     </li>
                     <li class="nav-item" data-target="projects">
-                        <i class="fas fa-project-diagram"></i> <span data-i18n="admin-nav-projects">إدارة المشاريع</span>
+                        <i class="fas fa-project-diagram"></i> <span data-i18n="admin-nav-projects">إدارة
+                            المشاريع</span>
                     </li>
                     <li class="nav-item" data-target="settings">
                         <i class="fas fa-cogs"></i> <span data-i18n="admin-nav-settings">إعدادات المنصة</span>
                     </li>
                 </ul>
             </nav>
-            
+
             <div class="sidebar-footer">
                 <button class="btn btn-outline btn-block" id="logoutBtn" data-i18n="admin-logout">تسجيل الخروج</button>
                 <div class="lang-switch-admin mt-4 text-center">
@@ -99,11 +106,11 @@
 
             <!-- TAB CONTENTS -->
             <div class="admin-content-wrapper">
-                
+
                 <!-- VIEW 1: OVERVIEW -->
                 <div class="tab-pane active" id="overview">
                     <h2 class="page-title" data-i18n="admin-title-overview">نظرة عامة / الإحصائيات</h2>
-                    
+
                     <!-- Stats Grid -->
                     <div class="stats-grid">
                         <div class="stat-card glass-hover">
@@ -182,7 +189,8 @@
                 <div class="tab-pane" id="courses">
                     <div class="page-header d-flex justify-between align-center">
                         <h2 class="page-title" data-i18n="admin-nav-courses">إدارة الكورسات</h2>
-                        <button class="btn btn-primary" onclick="openModal('courseModal')"><i class="fas fa-plus"></i> إضافة كورس جديد</button>
+                        <button class="btn btn-primary" onclick="openModal('courseModal')"><i class="fas fa-plus"></i>
+                            إضافة كورس جديد</button>
                     </div>
 
                     <div class="card glass-panel mt-4">
@@ -212,7 +220,8 @@
                     <div class="page-header d-flex justify-between align-center">
                         <h2 class="page-title" data-i18n="admin-nav-users">إدارة الطلاب</h2>
                         <div class="search-box">
-                            <input type="text" class="form-control" placeholder="ابحث عن طالب..." data-i18n="admin-search-student">
+                            <input type="text" class="form-control" placeholder="ابحث عن طالب..."
+                                data-i18n="admin-search-student">
                             <i class="fas fa-search"></i>
                         </div>
                     </div>
@@ -226,7 +235,8 @@
                                     <button class="btn btn-sm btn-outline">الموقوفين</button>
                                 </div>
                                 <button class="btn btn-sm btn-primary" onclick="openModal('addStudentModal')">
-                                    <i class="fas fa-user-plus"></i> <span data-i18n="admin-add-student">أضف طالب جديد</span>
+                                    <i class="fas fa-user-plus"></i> <span data-i18n="admin-add-student">أضف طالب
+                                        جديد</span>
                                 </button>
                             </div>
                             <div class="table-responsive">
@@ -256,7 +266,7 @@
                     <h2 class="page-title" data-i18n="admin-nav-subs">إدارة الاشتراكات</h2>
                     <p class="text-muted">هنا يتم تتبع تفاصيل الدفع ومنح الصلاحيات اليدوية (قبل ربط Stripe).</p>
                     <!-- Simple list for now -->
-                     <div class="card glass-panel mt-4">
+                    <div class="card glass-panel mt-4">
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="admin-table">
@@ -277,15 +287,16 @@
                                             <td>MRCOG Regular</td>
                                             <td>20-07-2026</td>
                                             <td><span class="badge bg-success">نشط</span></td>
-                                            <td><button class="btn btn-sm btn-outline"><i class="fas fa-ban"></i> إيقاف</button></td>
+                                            <td><button class="btn btn-sm btn-outline"><i class="fas fa-ban"></i>
+                                                    إيقاف</button></td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                     </div>
+                    </div>
                 </div>
-                
+
                 <!-- VIEW 5: DOCTOR/CONTENT -->
                 <div class="tab-pane" id="doctor">
                     <h2 class="page-title" data-i18n="admin-nav-doctor">المدرب والمحتوى</h2>
@@ -299,7 +310,8 @@
                                 </div>
                                 <div class="form-group">
                                     <label>السيرة الذاتية (نبذة)</label>
-                                    <textarea class="form-control" rows="4">استشارية أمراض النساء والتوليد وزميلة الكلية الملكية...</textarea>
+                                    <textarea class="form-control"
+                                        rows="4">استشارية أمراض النساء والتوليد وزميلة الكلية الملكية...</textarea>
                                 </div>
                                 <button type="button" class="btn btn-primary mt-3">حفظ البيانات</button>
                             </form>
@@ -312,7 +324,7 @@
                     <h2 class="page-title" data-i18n="admin-nav-enquiries">الاستفسارات الواردة</h2>
                     <p class="text-muted">طلبات الاتصال التي تصل من صفحة "اتصل بنا".</p>
                     <div class="card glass-panel mt-4">
-                         <div class="card-body">
+                        <div class="card-body">
                             <div class="table-responsive">
                                 <table class="admin-table">
                                     <thead>
@@ -329,7 +341,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                         </div>
+                        </div>
                     </div>
                 </div>
 
@@ -338,7 +350,7 @@
                     <h2 class="page-title" data-i18n="admin-nav-help">طلبات المساعدة التقنية</h2>
                     <p class="text-muted">الطلبات المرسلة عبر نموذج "طلب مساعدة".</p>
                     <div class="card glass-panel mt-4">
-                         <div class="card-body">
+                        <div class="card-body">
                             <div class="table-responsive">
                                 <table class="admin-table">
                                     <thead>
@@ -356,7 +368,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                         </div>
+                        </div>
                     </div>
                 </div>
 
@@ -364,7 +376,8 @@
                 <div class="tab-pane" id="news">
                     <div class="page-header d-flex justify-between align-center">
                         <h2 class="page-title" data-i18n="admin-nav-news">إدارة الأخبار</h2>
-                        <button class="btn btn-primary" onclick="openModal('newsModal')"><i class="fas fa-plus"></i> إضافة خبر جديد</button>
+                        <button class="btn btn-primary" onclick="openModal('newsModal')"><i class="fas fa-plus"></i>
+                            إضافة خبر جديد</button>
                     </div>
                     <div class="card glass-panel mt-4">
                         <div class="card-body">
@@ -391,7 +404,8 @@
                 <div class="tab-pane" id="projects">
                     <div class="page-header d-flex justify-between align-center">
                         <h2 class="page-title" data-i18n="admin-nav-projects">إدارة المشاريع</h2>
-                        <button class="btn btn-primary" onclick="openModal('projectModal')"><i class="fas fa-plus"></i> إضافة مشروع جديد</button>
+                        <button class="btn btn-primary" onclick="openModal('projectModal')"><i class="fas fa-plus"></i>
+                            إضافة مشروع جديد</button>
                     </div>
                     <div class="card glass-panel mt-4">
                         <div class="card-body">
@@ -417,7 +431,7 @@
                 <!-- VIEW 7: SETTINGS -->
                 <div class="tab-pane" id="settings">
                     <h2 class="page-title" data-i18n="admin-nav-settings">إعدادات المنصة</h2>
-                    
+
                     <div class="card glass-panel mt-4">
                         <div class="card-header">
                             <h3>معلومات التواصل والتذييل</h3>
@@ -446,7 +460,8 @@
                                 </div>
                                 <div class="form-group mt-3">
                                     <label>وصف التذييل (Footer)</label>
-                                    <textarea class="form-control" rows="3">منصتك الأولى للتحضير لامتحانات الزمالة البريطانية...</textarea>
+                                    <textarea class="form-control"
+                                        rows="3">منصتك الأولى للتحضير لامتحانات الزمالة البريطانية...</textarea>
                                 </div>
                                 <button type="button" class="btn btn-primary mt-4">تحديث الإعدادات</button>
                             </form>
@@ -459,7 +474,7 @@
     </div>
 
     <!-- MODALS ZONE -->
-    
+
     <!-- Course Modal -->
     <div id="courseModal" class="admin-modal">
         <div class="modal-content glass-panel">
@@ -536,7 +551,8 @@
                             <option value="غير نشط">غير نشط</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 mt-3" data-i18n="admin-save-student">إضافة الطالب وتأكيد بياناته</button>
+                    <button type="submit" class="btn btn-primary w-100 mt-3" data-i18n="admin-save-student">إضافة الطالب
+                        وتأكيد بياناته</button>
                 </form>
             </div>
         </div>
@@ -595,4 +611,5 @@
     <script src="supabase-config.js"></script>
     <script src="admin.js"></script>
 </body>
+
 </html>

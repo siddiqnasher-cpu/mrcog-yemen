@@ -8,7 +8,7 @@ const translations = {
         "nav-login": "تسجيل الدخول",
         "nav-subscribe": "اشترك الآن",
         "nav-help": "طلب مساعدة",
-        
+
         // Hero
         "hero-badge": "الخيار الأول للنجاح 🌟",
         "hero-title": 'تفوق في امتحان <span class="gradient-text">MRCOG</span> بكل ثقة',
@@ -20,7 +20,7 @@ const translations = {
         "badge-success-text": "نسبة نجاح عالية",
         "badge-support": "٢٤/٧",
         "badge-support-text": "دعم عبر واتساب",
-        
+
         // Courses Structure
         "section-courses-title": 'الكورسات <span class="highlight">المتاحة</span>',
         "section-courses-desc": "اختر الكورس الأنسب لك للبدء في رحلة نجاحك.",
@@ -35,11 +35,11 @@ const translations = {
         "course-regular-f8": "التسجيلات متاحة حتى يوم الامتحان",
         "course-regular-f9": "سياسة الاسترجاع: خلال أسبوعين",
         "btn-subscribe": "اشترك الآن",
-        
+
         "course-crash-badge": "الأكثر شعبية",
         "course-crash-type": "الكورس المكثف (Crash)",
         "course-crash-f2": "١٥ محاضرة / شهر واحد",
-        
+
         "course-revision-type": "كورس المراجعة (Revision)",
         "course-revision-f1": "جميع ميزات الكورس المنتظم",
         "course-revision-f2": "جميع ميزات الكورس المكثف",
@@ -49,7 +49,7 @@ const translations = {
 
         "course-jan-type": "Jan 2026 Regular",
         "course-jan-f5": "التسجيلات متاحة لمدة ٦ أشهر",
-        
+
         // Testimonials
         "section-testimonials-title": 'ماذا يقول <span class="highlight">المشتركون؟</span>',
         "section-testimonials-desc": "تجارب حقيقية من طلاب اجتازوا الامتحان بنجاح.",
@@ -59,7 +59,7 @@ const translations = {
         "testim-2": `"منصة رائعة والدعم الفني عبر الواتساب متجاوب جداً. الامتحانات التجريبية كانت قريبة جداً من الامتحان الحقيقي."`,
         "testim-2-name": "د. أحمد",
         "testim-2-role": "طبيب مقيم",
-        
+
         // FAQ
         "section-faq-title": 'الأسئلة <span class="highlight">الشائعة</span>',
         "section-faq-desc": "كل ما تحتاج لمعرفته حول كورساتنا وطرق الاشتراك.",
@@ -71,13 +71,13 @@ const translations = {
         "faq-a3": "نوفر عدة طرق للدفع تشمل البطاقات الائتمانية، التحويل البنكي، والدفع عبر محافظ الهاتف المحمول. يمكنك اختيار الطريقة الأنسب لك أثناء التسجيل.",
         "faq-q4": "هل هناك دعم فني ومتابعة؟",
         "faq-a4": "نعم، نوفر دعماً مستمراً عبر مجموعات الواتساب للرد على جميع استفساراتك العلمية والتقنية على مدار الساعة طوال فترة الكورس.",
-        
+
         // CTA
         "cta-title": "هل أنت مستعد لبدء الكورس؟",
         "cta-desc": "احجز عبر موقعنا الإلكتروني أو تواصل معنا مباشرة",
         "cta-btn-join": "انضم إلينا الآن",
         "cta-btn-wa": "واتساب: +967 718 103 626",
-        
+
         // Footer
         "footer-about-title": "Led by Dr. أميرة الحميدي",
         "footer-about-desc": "منصتك الأولى للتحضير لامتحانات الزمالة البريطانية في أمراض النساء والتوليد. نقدم كورسات شاملة مع نخبة من أفضل المحاضرين.",
@@ -89,7 +89,7 @@ const translations = {
         "footer-phone1": "هاتف 1: +967 718 103 626 (مكالمات + واتس)",
         "footer-phone2": "هاتف 2: +967 774 939 168 (مكالمات)",
         "footer-copy": "© 2026 mrcog-yemen.com. جميع الحقوق محفوظة.",
-        
+
         // Auth Pages
         "auth-back": "العودة للرئيسية",
         "login-title": 'مرحباً <span class="highlight">مجدداً!</span>',
@@ -103,7 +103,7 @@ const translations = {
         "btn-login": "تسجيل الدخول",
         "no-account": 'ليس لديك حساب؟ <a href="register.html" class="highlight under-link" data-i18n="link-register">إنشاء حساب جديد</a>',
         "link-register": "إنشاء حساب جديد",
-        
+
         "register-title": 'انضم <span class="highlight">إلينا!</span>',
         "register-desc": "ابدأ رحلة تفوقك واجتياز امتحان الزمالة بنجاح.",
         "label-fname": "الاسم الأول",
@@ -125,7 +125,7 @@ const translations = {
         "nav-login": "Login",
         "nav-subscribe": "Subscribe Now",
         "nav-help": "Help Request",
-        
+
         // Hero
         "hero-badge": "The #1 Choice for Success 🌟",
         "hero-title": 'Ace the <span class="gradient-text">MRCOG</span> with Confidence',
@@ -137,7 +137,7 @@ const translations = {
         "badge-success-text": "High Success Rate",
         "badge-support": "24/7",
         "badge-support-text": "WhatsApp Support",
-        
+
         // Courses Structure
         "section-courses-title": 'Available <span class="highlight">Courses</span>',
         "section-courses-desc": "Choose the best course to start your success journey.",
@@ -152,11 +152,11 @@ const translations = {
         "course-regular-f8": "Records available till exam date",
         "course-regular-f9": "Refund Policy: 2 weeks",
         "btn-subscribe": "Subscribe Now",
-        
+
         "course-crash-badge": "Most Popular",
         "course-crash-type": "Crash Course",
         "course-crash-f2": "15 lectures / 1 month",
-        
+
         "course-revision-type": "Revision Course",
         "course-revision-f1": "All Regular Course Features",
         "course-revision-f2": "All Crash Course Features",
@@ -166,7 +166,7 @@ const translations = {
 
         "course-jan-type": "Jan 2026 Regular",
         "course-jan-f5": "Records available for 6 months",
-        
+
         // Testimonials
         "section-testimonials-title": 'What Our <span class="highlight">Members Say?</span>',
         "section-testimonials-desc": "Real experiences from students who passed successfully.",
@@ -176,7 +176,7 @@ const translations = {
         "testim-2": `"A great platform and highly responsive WhatsApp support. The mock exams were very similar to the real ones."`,
         "testim-2-name": "Dr. Ahmed",
         "testim-2-role": "Resident Doctor",
-        
+
         // FAQ
         "section-faq-title": 'Frequently Asked <span class="highlight">Questions</span>',
         "section-faq-desc": "Everything you need to know about our courses and subscriptions.",
@@ -188,13 +188,13 @@ const translations = {
         "faq-a3": "We offer multiple payment methods including Credit Cards, Bank Transfers, and Mobile Wallets. You can choose the most suitable method during registration.",
         "faq-q4": "Is there technical support and follow-up?",
         "faq-a4": "Yes, we provide continuous support via WhatsApp groups to answer all your academic and technical inquiries 24/7 during the course.",
-        
+
         // CTA
         "cta-title": "Ready to start the course?",
         "cta-desc": "Book online via our website or contact us directly.",
         "cta-btn-join": "Join Us Now",
         "cta-btn-wa": "WhatsApp: +967 718 103 626",
-        
+
         // Footer
         "footer-about-title": "Led by Dr. Amira Al-Humaidi",
         "footer-about-desc": "Your first platform for the MRCOG exam preparation. We offer comprehensive courses with top instructors.",
@@ -206,7 +206,7 @@ const translations = {
         "footer-phone1": "Phone 1: +967 718 103 626 (Calls + WhatsApp)",
         "footer-phone2": "Phone 2: +967 774 939 168 (Calls)",
         "footer-copy": "© 2026 mrcog-yemen.com. All rights reserved.",
-        
+
         // Auth Pages
         "auth-back": "Back to Home",
         "login-title": 'Welcome <span class="highlight">Back!</span>',
@@ -220,7 +220,7 @@ const translations = {
         "btn-login": "Login",
         "no-account": 'Don\'t have an account? <a href="register.html" class="highlight under-link" data-i18n="link-register">Create new account</a>',
         "link-register": "Create new account",
-        
+
         "register-title": 'Join <span class="highlight">Us!</span>',
         "register-desc": "Start your journey of excellence and pass the fellowship exam.",
         "label-fname": "First Name",
@@ -236,7 +236,7 @@ const translations = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    
+
     // Original UI Logic --------------------------------
 
     // Mobile Menu Toggle
@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
     faqItems.forEach(item => {
         const question = item.querySelector('.faq-question');
         const icon = item.querySelector('.faq-icon');
-        
+
         question.addEventListener('click', () => {
             faqItems.forEach(otherItem => {
                 if (otherItem !== item && otherItem.classList.contains('active')) {
@@ -296,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             item.classList.toggle('active');
-            
+
             if (item.classList.contains('active')) {
                 icon.textContent = '−';
             } else {
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Supabase Form Submissions ------------------------
-    
+
     // Contact Form
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const btn = contactForm.querySelector('button');
             const originalText = btn.textContent;
-            
+
             const name = document.getElementById('contact-name').value;
             const email = document.getElementById('contact-email').value;
             const message = document.getElementById('contact-message').value;
@@ -402,16 +402,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             const targetId = this.getAttribute('href');
-            if(targetId === '#') return;
-            
+            if (targetId === '#') return;
+
             const targetElement = document.querySelector(targetId);
-            
-            if(targetElement) {
+
+            if (targetElement) {
                 e.preventDefault();
                 const headerOffset = 80;
                 const elementPosition = targetElement.getBoundingClientRect().top;
                 const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-  
+
                 window.scrollTo({
                     top: offsetPosition,
                     behavior: "smooth"
@@ -426,7 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function setLanguage(lang) {
         currentLang = lang;
         localStorage.setItem("lang", lang);
-        
+
         // Update document dir and lang
         if (lang === "ar") {
             document.documentElement.setAttribute("dir", "rtl");
@@ -435,7 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.documentElement.setAttribute("dir", "ltr");
             document.documentElement.setAttribute("lang", "en");
         }
-        
+
         // Translate elements with data-i18n
         document.querySelectorAll("[data-i18n]").forEach(element => {
             const key = element.getAttribute("data-i18n");
@@ -472,10 +472,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle Login Auth Check Implementation
     const loginForm = document.querySelector('.auth-form');
     if (loginForm && window.location.pathname.includes('login.html')) {
-        loginForm.addEventListener('submit', function(e) {
+        loginForm.addEventListener('submit', function (e) {
             e.preventDefault();
             const emailInput = document.getElementById('email').value.trim().toLowerCase();
-            
+
             // Basic Frontend Validation & RBAC (Role-Based Access Control)
             const admins = ["mohammednasher532@gmail.com", "siddiqnasher@gmail.com"];
             if (admins.includes(emailInput)) {
