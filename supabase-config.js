@@ -1,3 +1,4 @@
+
 // Supabase configuration
 
 const SUPABASE_URL = 'https://zprzetmchppfeddgcrkf.supabase.co';

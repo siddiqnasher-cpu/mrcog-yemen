@@ -72,6 +72,8 @@ function initDashboard() {
     fetchHelpRequests();
     fetchNews();
     fetchProjects();
+    fetchLessons();
+    loadCoursesIntoLessonSelect();
 
     initAdminI18n();
 }
@@ -135,7 +137,6 @@ async function populateCoursesTable() {
                 <td>$${safeText(course.price)}</td>
                 <td><span class="badge ${badgeClass}">${safeText(course.status)}</span></td>
                 <td>
-                    <button class="btn btn-sm btn-outline" disabled><i class="fas fa-edit"></i> تعديل</button>
                     <button class="btn btn-sm btn-outline" style="color:var(--danger)" onclick="deleteCourse(${course.id})"><i class="fas fa-trash"></i></button>
                 </td>
             `;
@@ -182,7 +183,6 @@ async function populateUsersTable() {
                 <td>${safeText(user.courses)}</td>
                 <td><span class="badge ${badgeClass}">${safeText(user.status)}</span></td>
                 <td>
-                    <button class="btn btn-sm btn-outline" disabled><i class="fas fa-user-edit"></i> إدارة الحساب</button>
                     <button class="btn btn-sm btn-outline" style="color:var(--danger)" onclick="deleteStudent(${user.id})"><i class="fas fa-trash"></i></button>
                 </td>
             `;
@@ -357,6 +357,91 @@ async function fetchHelpRequests() {
     }
 }
 
+async function loadCoursesIntoLessonSelect() {
+    const select = document.getElementById('lessonCourseId');
+    if (!select || !window.supabaseClient) return;
+
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('courses')
+            .select('id, name')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        select.innerHTML = '<option value="">اختر الكورس</option>';
+
+        if (!data || data.length === 0) {
+            select.innerHTML = '<option value="">لا توجد كورسات</option>';
+            return;
+        }
+
+        data.forEach(course => {
+            const option = document.createElement('option');
+            option.value = course.id;
+            option.textContent = course.name;
+            select.appendChild(option);
+        });
+    } catch (err) {
+        console.error('Error loading course list:', err);
+        select.innerHTML = '<option value="">خطأ في تحميل الكورسات</option>';
+    }
+}
+
+async function fetchLessons() {
+    const tbody = document.getElementById('lessonsTableBody');
+    if (!tbody) return;
+
+    if (!window.supabaseClient) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center">Supabase غير متصل</td></tr>';
+        return;
+    }
+
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('course_lessons')
+            .select(`
+                id,
+                title,
+                video_url,
+                lesson_order,
+                is_free,
+                course_id,
+                courses(name)
+            `)
+            .order('lesson_order', { ascending: true });
+
+        if (error) throw error;
+
+        tbody.innerHTML = '';
+
+        if (!data || data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center">لا توجد فيديوهات</td></tr>';
+            return;
+        }
+
+        data.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${item.courses?.name || '-'}</strong></td>
+                <td>${item.title || '-'}</td>
+                <td>${item.video_url ? `<a href="${item.video_url}" target="_blank">فتح الرابط</a>` : '-'}</td>
+                <td>${item.lesson_order ?? '-'}</td>
+                <td><span class="badge ${item.is_free ? 'bg-success' : 'bg-warning'}">${item.is_free ? 'مجاني' : 'مدفوع'}</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline" style="color:var(--danger)" onclick="deleteLesson(${item.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error('Error fetching lessons:', err);
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center">خطأ في تحميل الفيديوهات</td></tr>';
+    }
+}
+
 /* =========================================
    MODAL LOGIC
    ========================================= */
@@ -404,6 +489,7 @@ document.getElementById('courseForm')?.addEventListener('submit', async function
         if (error) throw error;
 
         await populateCoursesTable();
+        await loadCoursesIntoLessonSelect();
         closeModal('courseModal');
         this.reset();
         alert("تمت إضافة الكورس بنجاح!");
@@ -530,6 +616,44 @@ document.getElementById('projectForm')?.addEventListener('submit', async functio
     }
 });
 
+document.getElementById('lessonForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const courseId = document.getElementById('lessonCourseId').value;
+    const title = document.getElementById('lessonTitle').value;
+    const videoUrl = document.getElementById('lessonVideoUrl').value;
+    const lessonOrder = document.getElementById('lessonOrder').value;
+    const isFree = document.getElementById('lessonIsFree').value === 'true';
+
+    if (!window.supabaseClient) {
+        alert("خطأ: Supabase غير متصل.");
+        return;
+    }
+
+    try {
+        const { error } = await window.supabaseClient
+            .from('course_lessons')
+            .insert([{
+                course_id: Number(courseId),
+                title: title,
+                video_url: videoUrl,
+                lesson_order: Number(lessonOrder || 1),
+                is_free: isFree
+            }]);
+
+        if (error) throw error;
+
+        closeModal('lessonModal');
+        this.reset();
+        await fetchLessons();
+        await loadCoursesIntoLessonSelect();
+        alert("تمت إضافة الفيديو بنجاح!");
+    } catch (err) {
+        console.error(err);
+        alert("حدث خطأ أثناء حفظ الفيديو: " + (err.message || err));
+    }
+});
+
 /* =========================================
    DELETE FUNCTIONS
    ========================================= */
@@ -564,6 +688,8 @@ async function deleteCourse(id) {
         const { error } = await window.supabaseClient.from('courses').delete().eq('id', id);
         if (error) throw error;
         await populateCoursesTable();
+        await loadCoursesIntoLessonSelect();
+        await fetchLessons();
     } catch (err) {
         console.error(err);
         alert("فشل حذف الكورس");
@@ -594,6 +720,24 @@ async function deleteMessage(id) {
     }
 }
 
+async function deleteLesson(id) {
+    if (!confirm("هل تريد حذف هذا الفيديو؟")) return;
+
+    try {
+        const { error } = await window.supabaseClient
+            .from('course_lessons')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+
+        await fetchLessons();
+    } catch (err) {
+        console.error(err);
+        alert("فشل حذف الفيديو");
+    }
+}
+
 /* =========================================
    I18N LOGIC FOR ADMIN
    ========================================= */
@@ -603,10 +747,10 @@ const adminTranslations = {
         "admin-nav-overview": "نظرة عامة",
         "admin-nav-courses": "إدارة الكورسات",
         "admin-nav-users": "إدارة الطلاب",
-        "admin-nav-subs": "إدارة الاشتراكات",
-        "admin-nav-doctor": "المدرب / المحتوى",
         "admin-nav-enquiries": "الاستفسارات الواردة",
-        "admin-nav-settings": "إعدادات المنصة",
+        "admin-nav-help": "طلبات المساعدة",
+        "admin-nav-news": "إدارة الأخبار",
+        "admin-nav-projects": "إدارة المشاريع",
         "admin-logout": "تسجيل الخروج",
         "admin-title-overview": "نظرة عامة / الإحصائيات",
         "admin-stat-users": "إجمالي الطلاب",
@@ -620,19 +764,16 @@ const adminTranslations = {
         "admin-user-email": "البريد الإلكتروني",
         "admin-user-phone": "رقم الهاتف (واتس آب)",
         "admin-user-status": "حالة الحساب",
-        "admin-save-student": "إضافة الطالب وتأكيد بياناته",
-        "admin-nav-help": "طلبات المساعدة",
-        "admin-nav-news": "إدارة الأخبار",
-        "admin-nav-projects": "إدارة المشاريع"
+        "admin-save-student": "إضافة الطالب وتأكيد بياناته"
     },
     "en": {
         "admin-nav-overview": "Overview Summary",
         "admin-nav-courses": "Manage Courses",
         "admin-nav-users": "Manage Students",
-        "admin-nav-subs": "Subscriptions",
-        "admin-nav-doctor": "Instructor / Content",
         "admin-nav-enquiries": "Enquiries",
-        "admin-nav-settings": "Platform Settings",
+        "admin-nav-help": "Help Requests",
+        "admin-nav-news": "Manage News",
+        "admin-nav-projects": "Manage Projects",
         "admin-logout": "Logout",
         "admin-title-overview": "Overview / Statistics",
         "admin-stat-users": "Total Students",
@@ -646,10 +787,7 @@ const adminTranslations = {
         "admin-user-email": "Email Address",
         "admin-user-phone": "Phone Number (WhatsApp)",
         "admin-user-status": "Account Status",
-        "admin-save-student": "Confirm & Add Student",
-        "admin-nav-help": "Help Requests",
-        "admin-nav-news": "Manage News",
-        "admin-nav-projects": "Manage Projects"
+        "admin-save-student": "Confirm & Add Student"
     }
 };
 

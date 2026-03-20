@@ -447,6 +447,9 @@
                 <button class="nav-item" data-target="helpPane">
                     <i class="fas fa-life-ring"></i> <span data-i18n="admin-nav-help">طلبات المساعدة</span>
                 </button>
+                <button class="nav-item" data-target="lessonsPane">
+                    <i class="fas fa-video"></i> <span>إدارة فيديوهات الكورسات</span>
+                </button>
             </nav>
 
             <button id="logoutBtn" class="logout-btn">
@@ -494,7 +497,7 @@
                         <h3 data-i18n="admin-activity">النشاط الأخير</h3>
                     </div>
                     <p style="color: var(--muted); margin: 0;">
-                        يمكنك من هنا إدارة الطلاب والكورسات والأخبار والمشاريع والرسائل.
+                        يمكنك من هنا إدارة الطلاب والكورسات والأخبار والمشاريع والرسائل وفيديوهات الكورسات.
                     </p>
                 </div>
             </section>
@@ -678,6 +681,37 @@
                     </div>
                 </div>
             </section>
+
+            <section id="lessonsPane" class="tab-pane">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3>فيديوهات الكورسات</h3>
+                        <button class="btn btn-primary" onclick="openModal('lessonModal')">
+                            <i class="fas fa-plus"></i> إضافة فيديو
+                        </button>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>الكورس</th>
+                                    <th>عنوان الدرس</th>
+                                    <th>الرابط</th>
+                                    <th>الترتيب</th>
+                                    <th>مجاني</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lessonsTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center">جاري التحميل...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -808,6 +842,52 @@
                 <div class="form-actions">
                     <button type="button" class="btn btn-outline" onclick="closeModal('projectModal')">إلغاء</button>
                     <button type="submit" class="btn btn-primary">حفظ المشروع</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="lessonModal" class="admin-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>إضافة فيديو للكورس</h3>
+                <button class="close-btn" onclick="closeModal('lessonModal')">&times;</button>
+            </div>
+
+            <form id="lessonForm">
+                <div class="form-group">
+                    <label>اختر الكورس</label>
+                    <select id="lessonCourseId" class="form-control" required>
+                        <option value="">جاري تحميل الكورسات...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>عنوان الدرس</label>
+                    <input type="text" id="lessonTitle" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label>رابط الفيديو</label>
+                    <input type="url" id="lessonVideoUrl" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label>ترتيب الدرس</label>
+                    <input type="number" id="lessonOrder" class="form-control" value="1" min="1" />
+                </div>
+
+                <div class="form-group">
+                    <label>نوع الدرس</label>
+                    <select id="lessonIsFree" class="form-control">
+                        <option value="false">مدفوع</option>
+                        <option value="true">مجاني</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('lessonModal')">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ الفيديو</button>
                 </div>
             </form>
         </div>
