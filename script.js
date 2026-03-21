@@ -50,6 +50,12 @@ const translations = {
         "course-jan-type": "Jan 2026 Regular",
         "course-jan-f5": "التسجيلات متاحة لمدة ٦ أشهر",
 
+        "section-free-title": 'الكورسات <span class="highlight">المجانية</span>',
+        "section-free-desc": "شاهد فيديوهات ودروس مجانية للتحضير للامتحان.",
+
+        "section-news-title": 'آخر <span class="highlight">الأخبار</span> والتحديثات',
+        "section-news-desc": "ابقَ على اطلاع بأحدث التطورات في برامجنا التدريبية.",
+
         // Testimonials
         "section-testimonials-title": 'ماذا يقول <span class="highlight">المشتركون؟</span>',
         "section-testimonials-desc": "تجارب حقيقية من طلاب اجتازوا الامتحان بنجاح.",
@@ -166,6 +172,12 @@ const translations = {
 
         "course-jan-type": "Jan 2026 Regular",
         "course-jan-f5": "Records available for 6 months",
+
+        "section-free-title": 'Free <span class="highlight">Courses</span>',
+        "section-free-desc": "Watch free videos and lessons to prepare for the exam.",
+
+        "section-news-title": 'Latest <span class="highlight">News</span> & Updates',
+        "section-news-desc": "Stay up-to-date with the latest developments in our training programs.",
 
         // Testimonials
         "section-testimonials-title": 'What Our <span class="highlight">Members Say?</span>',
@@ -492,9 +504,95 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Fetch News and Projects for Homepage
+    // Fetch News, Projects, and Courses for Homepage
     async function fetchHomeContent() {
         if (!window.supabaseClient) return;
+
+        // Fetch Main Courses
+        const coursesContainer = document.getElementById('dynamic-courses-container');
+        if (coursesContainer) {
+            try {
+                const { data: courses, error } = await window.supabaseClient
+                    .from('courses')
+                    .select('*')
+                    .eq('status', 'نشط')
+                    .order('created_at', { ascending: false });
+
+                if (!error && courses && courses.length > 0) {
+                    coursesContainer.innerHTML = ''; // Clear hardcoded HTML
+                    const bgs = ['primary-bg', 'highlight-bg', 'secondary-bg', 'dark-bg'];
+                    courses.forEach((course, index) => {
+                        let nameParts = course.name.split(' (');
+                        let mainName = nameParts[0] || course.name;
+                        let typeName = nameParts[1] ? nameParts[1].replace(')', '') : '';
+                        let bgClass = bgs[index % bgs.length];
+
+                        const card = document.createElement('div');
+                        card.className = 'course-card glass-hover';
+                        card.innerHTML = `
+                            <div class="card-header ${bgClass}">
+                                <h3>${mainName}</h3>
+                                <span class="course-type">${typeName}</span>
+                            </div>
+                            <div class="card-body">
+                                <ul class="features-list">
+                                    <li>🧑‍🏫 المدرب: ${course.instructor || '-'}</li>
+                                    <li>💰 السعر: $${course.price || '0'}</li>
+                                    <li>📞 دعم واتساب ٢٤/٧</li>
+                                    <li>📚 المذكرات بصيغة PDF</li>
+                                    <li>📱 متوافق مع جميع الأجهزة</li>
+                                </ul>
+                            </div>
+                            <div class="card-footer">
+                                <a href="login.html" class="btn btn-primary btn-block">اشترك الآن</a>
+                            </div>
+                        `;
+                        coursesContainer.appendChild(card);
+                    });
+                }
+            } catch (err) {
+                console.error('Error fetching courses:', err);
+            }
+        }
+
+        // Fetch Free Lessons
+        const freeCoursesContainer = document.getElementById('free-courses-container');
+        if (freeCoursesContainer) {
+            try {
+                const { data: freeLessons, error } = await window.supabaseClient
+                    .from('course_lessons')
+                    .select('*')
+                    .eq('is_free', true)
+                    .order('lesson_order', { ascending: true })
+                    .limit(6);
+
+                if (error) throw error;
+
+                if (freeLessons) {
+                    freeCoursesContainer.innerHTML = freeLessons.length === 0 ? '<p class="text-center text-muted col-12">لا توجد دروس مجانية حالياً.</p>' : '';
+                    freeLessons.forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'col-md-4 mb-4';
+                        card.innerHTML = `
+                            <div class="card h-100 glass-panel p-4">
+                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; margin-bottom: 15px; background: #000;">
+                                    <video controls style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                                        <source src="${item.video_url}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                                <span class="badge bg-success mb-2" style="display:inline-block; padding: 5px 10px;" data-i18n="badge-free">${window.currentLang === 'en' ? 'Free' : 'مجاني'}</span>
+                                <h4>${item.title}</h4>
+                            </div>
+                        `;
+                        freeCoursesContainer.appendChild(card);
+                    });
+                }
+            } catch (err) {
+                console.error('Error fetching free lessons:', err);
+                freeCoursesContainer.innerHTML = '<p class="text-center text-danger col-12">فشل تحميل الكورسات المجانية.</p>';
+            }
+        }
 
         // Fetch News
         const newsContainer = document.getElementById('news-container');

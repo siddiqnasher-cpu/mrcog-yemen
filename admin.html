@@ -869,8 +869,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label>ملف الفيديو</label>
-                    <input type="file" id="lessonVideoFile" class="form-control" accept="video/*" required />
+                    <label>رابط الفيديو المباشر (اختياري - يوتيوب أو غيره)</label>
+                    <input type="url" id="lessonVideoUrl" class="form-control" placeholder="أدخل الرابط أو اختر ملف أدناه" />
+                </div>
+
+                <div class="form-group">
+                    <label>ملف الفيديو (اختياري إذا تم إدخال رابط)</label>
+                    <input type="file" id="lessonVideoFile" class="form-control" accept="video/*" />
                 </div>
 
                 <div class="form-group">

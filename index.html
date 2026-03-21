@@ -103,7 +103,7 @@
                 <p class="section-desc" data-i18n="section-courses-desc">اختر الكورس الأنسب لك للبدء في رحلة نجاحك.</p>
             </div>
 
-            <div class="course-grid">
+            <div id="dynamic-courses-container" class="course-grid">
                 <!-- Course Card 1 -->
                 <div class="course-card glass-hover">
                     <div class="card-header primary-bg">
@@ -171,10 +171,8 @@
                         <a href="#" class="btn btn-outline btn-block" data-i18n="btn-readmore">اقرأ المزيد</a>
                     </div>
                 </div>
-            </div>
 
-            <!-- Jan 2026 Regular -->
-            <div class="course-grid mt-4">
+                <!-- Jan 2026 Regular -->
                 <div class="course-card glass-hover">
                     <div class="card-header dark-bg">
                         <h3>MRCOG Part 2</h3>
@@ -319,12 +317,26 @@
         </div>
     </section>
 
+    <!-- Free Courses / Lessons Section -->
+    <section id="free-courses-section" class="section-padding bg-white">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2 class="section-title" data-i18n="section-free-title">الكورسات <span class="highlight">المجانية</span></h2>
+                <p class="section-desc" data-i18n="section-free-desc">شاهد فيديوهات ودروس مجانية للتحضير للامتحان.</p>
+            </div>
+            <div id="free-courses-container" class="row">
+                <!-- Will be populated via JS -->
+                <p class="text-center text-muted col-12">جاري تحميل الكورسات المجانية...</p>
+            </div>
+        </div>
+    </section>
+
     <!-- News & Updates Section -->
     <section id="news-section" class="section-padding bg-light">
         <div class="container">
             <div class="section-header text-center">
-                <h2 class="section-title">آخر <span class="highlight">الأخبار</span> والتحديثات</h2>
-                <p class="section-desc">ابقَ على اطلاع بأحدث التطورات في برامجنا التدريبية.</p>
+                <h2 class="section-title" data-i18n="section-news-title">آخر <span class="highlight">الأخبار</span> والتحديثات</h2>
+                <p class="section-desc" data-i18n="section-news-desc">ابقَ على اطلاع بأحدث التطورات في برامجنا التدريبية.</p>
             </div>
             <div id="news-container" class="row">
                 <!-- Will be populated via JS -->

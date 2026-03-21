@@ -643,8 +643,11 @@ document.getElementById('lessonForm')?.addEventListener('submit', async function
     const title = document.getElementById('lessonTitle').value;
     const lessonOrder = document.getElementById('lessonOrder').value;
     const isFree = document.getElementById('lessonIsFree').value === 'true';
+    const videoUrlInput = document.getElementById('lessonVideoUrl')?.value;
     const videoFileInput = document.getElementById('lessonVideoFile');
     const videoFile = videoFileInput?.files?.[0];
+
+    const btn = this.querySelector('button[type="submit"]');
 
     if (!window.supabaseClient) {
         alert("خطأ: Supabase غير متصل.");
@@ -661,54 +664,73 @@ document.getElementById('lessonForm')?.addEventListener('submit', async function
         return;
     }
 
-    if (!videoFile) {
-        alert("يرجى اختيار ملف الفيديو.");
+    if (!videoUrlInput && !videoFile) {
+        alert("يرجى إدخال رابط الفيديو أو اختيار ملف مرفوع.");
         return;
     }
 
     try {
-        const safeName = sanitizeFileName(videoFile.name);
-        const filePath = `course-${courseId}/${Date.now()}-${safeName}`;
-
-        const { error: uploadError } = await window.supabaseClient.storage
-            .from('course-videos')
-            .upload(filePath, videoFile, {
-                cacheControl: '3600',
-                upsert: false,
-                contentType: videoFile.type
-            });
-
-        if (uploadError) throw uploadError;
-
-        const { data: publicUrlData } = window.supabaseClient.storage
-            .from('course-videos')
-            .getPublicUrl(filePath);
-
-        const publicUrl = publicUrlData?.publicUrl;
-
-        if (!publicUrl) {
-            throw new Error('تعذر إنشاء رابط الفيديو بعد الرفع.');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = "جاري الحفظ... (قد يستغرق الرفع وقتاً طويلاً للأسف)";
         }
 
+        let finalVideoUrl = videoUrlInput;
+
+        // Upload to Storage if File is selected
+        if (videoFile) {
+            const safeName = sanitizeFileName(videoFile.name);
+            const filePath = `course-${courseId}/${Date.now()}-${safeName}`;
+
+            const { error: uploadError } = await window.supabaseClient.storage
+                .from('course-videos')
+                .upload(filePath, videoFile, {
+                    cacheControl: '3600',
+                    upsert: false,
+                    contentType: videoFile.type
+                });
+
+            if (uploadError) {
+                throw new Error("تعذر الرفع (قد لا يكون هناك Storage bucket بإسم course-videos أو الملف كبير جداً). جرب استخدام رابط مباشر للدرس. التفاصيل: " + uploadError.message);
+            }
+
+            const { data: publicUrlData } = window.supabaseClient.storage
+                .from('course-videos')
+                .getPublicUrl(filePath);
+
+            if (!publicUrlData || !publicUrlData.publicUrl) {
+                throw new Error('تعذر إنشاء رابط الفيديو بعد الرفع.');
+            }
+            finalVideoUrl = publicUrlData.publicUrl;
+        }
+
+        // Insert into database
         const { error: insertError } = await window.supabaseClient
             .from('course_lessons')
             .insert([{
                 course_id: Number(courseId),
                 title: title,
-                video_url: publicUrl,
+                video_url: finalVideoUrl,
                 lesson_order: Number(lessonOrder || 1),
                 is_free: isFree
             }]);
 
-        if (insertError) throw insertError;
+        if (insertError) {
+            throw new Error("تعذر حفظ الدرس في قاعدة البيانات (تأكد من وجود جدول course_lessons). التفاصيل: " + insertError.message);
+        }
 
         closeModal('lessonModal');
         this.reset();
         await fetchLessons();
-        alert("تم رفع الفيديو وحفظه بنجاح!");
+        alert("تم حفظ بيانات الفيديو بنجاح!");
     } catch (err) {
         console.error(err);
-        alert("حدث خطأ أثناء رفع الفيديو: " + (err.message || err));
+        alert("حدث خطأ أثناء حفظ الفيديو: " + (err.message || err));
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = "حفظ الفيديو";
+        }
     }
 });
 
