@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Modal Logic for Help Request
+    // Modal Logic for Help Request and Payment
     window.openHelpModal = () => {
         const modal = document.getElementById('helpModal');
         if (modal) modal.style.display = 'flex';
@@ -326,6 +326,117 @@ document.addEventListener('DOMContentLoaded', () => {
     window.closeHelpModal = () => {
         const modal = document.getElementById('helpModal');
         if (modal) modal.style.display = 'none';
+    };
+
+    window.openPaymentModal = (courseName, coursePrice) => {
+        const modal = document.getElementById('paymentModal');
+        if (modal) {
+            document.getElementById('payment-course-name').textContent = courseName;
+            document.getElementById('payment-course-price').textContent = `$${coursePrice || '0.00'}`;
+            modal.style.display = 'flex';
+        }
+    };
+
+    window.closePaymentModal = () => {
+        const modal = document.getElementById('paymentModal');
+        if (modal) modal.style.display = 'none';
+    };
+
+    window.processPayment = async () => {
+        const method = document.querySelector('input[name="payment_method"]:checked').value;
+        const btn = document.getElementById('btn-process-payment');
+        const ogText = btn.textContent;
+        
+        // Basic Card Validation if selected
+        let isValid = true;
+        if (method === 'card') {
+            const cardNumber = document.getElementById('card-number').value;
+            const cardExpiry = document.getElementById('card-expiry').value;
+            const cardCvc = document.getElementById('card-cvc').value;
+            
+            if (!cardNumber || !cardExpiry || !cardCvc) {
+                alert(currentLang === 'ar' ? 'يرجى إدخال بيانات البطاقة كاملة.' : 'Please enter all card details.');
+                isValid = false;
+            } else if (cardNumber.length < 14) {
+                alert(currentLang === 'ar' ? 'رقم البطاقة غير صالح.' : 'Invalid card number.');
+                isValid = false;
+            }
+        }
+        
+        if (!isValid) return;
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + (currentLang === 'ar' ? 'جاري معالجة الدفع...' : 'Processing payment...');
+
+        try {
+            // Simulate API call to payment gateway
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Track subscription in Supabase
+            const courseName = document.getElementById('payment-course-name').textContent;
+            let priceStr = document.getElementById('payment-course-price').textContent;
+            let coursePrice = parseFloat(priceStr.replace('$', '')) || 0;
+            const userEmail = localStorage.getItem('userEmail') || 'زائر';
+            
+            if (window.supabaseClient && window.supabaseClient.supabaseUrl !== 'YOUR_SUPABASE_URL') {
+                const { error } = await window.supabaseClient.from('subscriptions').insert([{ 
+                    course_name: courseName, 
+                    user_email: userEmail,
+                    price: coursePrice,
+                    payment_method: method,
+                    status: 'نشط'
+                }]);
+                
+                if (error) {
+                    console.error('Error saving subscription:', error);
+                }
+            }
+            
+            alert(currentLang === 'ar' ? 'تمت عملية الدفع بنجاح! سيتم توجيهك إلى الكورس الخاص بك.' : 'Payment Successful! Redirecting to your course.');
+            closePaymentModal();
+            
+            // Clear inputs
+            if (document.getElementById('card-number')) document.getElementById('card-number').value = '';
+            if (document.getElementById('card-expiry')) document.getElementById('card-expiry').value = '';
+            if (document.getElementById('card-cvc')) document.getElementById('card-cvc').value = '';
+            
+        } catch (err) {
+            console.error(err);
+            alert(currentLang === 'ar' ? 'حدث خطأ أثناء معالجة الدفع.' : 'Error processing payment.');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = ogText;
+        }
+    };
+
+    // Payment method selection styling
+    document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            // Reset borders
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.style.borderColor = 'var(--border)';
+                opt.style.background = 'transparent';
+            });
+            // Highlight selected
+            const parent = e.target.closest('.payment-option');
+            parent.style.borderColor = 'var(--primary)';
+            parent.style.background = 'rgba(37, 99, 235, 0.05)';
+
+            // Toggle Card Element Form visibility
+            const cardForm = document.getElementById('card-element-container');
+            if (e.target.value === 'card') {
+                cardForm.style.display = 'block';
+            } else {
+                cardForm.style.display = 'none';
+            }
+        });
+    });
+
+    // Close modal when clicking outside
+    window.onclick = function (event) {
+        if (event.target.classList.contains('admin-modal')) {
+            event.target.style.display = 'none';
+        }
     };
 
     // Supabase Form Submissions ------------------------
@@ -544,7 +655,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </ul>
                             </div>
                             <div class="card-footer">
-                                <a href="login.html" class="btn btn-primary btn-block">اشترك الآن</a>
+                                <button onclick="openPaymentModal('${mainName}', '${course.price}')" class="btn btn-primary btn-block">اشترك الآن</button>
                             </div>
                         `;
                         coursesContainer.appendChild(card);

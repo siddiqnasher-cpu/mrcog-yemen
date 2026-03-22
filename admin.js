@@ -73,7 +73,9 @@ function initDashboard() {
     fetchNews();
     fetchProjects();
     fetchLessons();
+    fetchMaterials();
     loadCoursesIntoLessonSelect();
+    loadCoursesIntoMaterialSelect();
 
     initAdminI18n();
 }
@@ -462,6 +464,91 @@ async function fetchLessons() {
     }
 }
 
+async function loadCoursesIntoMaterialSelect() {
+    const select = document.getElementById('materialCourseId');
+    if (!select) return;
+
+    if (!window.supabaseClient) {
+        select.innerHTML = '<option value="">Supabase غير متصل</option>';
+        return;
+    }
+
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('courses')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        select.innerHTML = '<option value="">اختر الكورس</option>';
+
+        if (!data || data.length === 0) {
+            select.innerHTML = '<option value="">لا توجد كورسات</option>';
+            return;
+        }
+
+        data.forEach(course => {
+            const option = document.createElement('option');
+            option.value = course.id;
+            option.textContent = course.name || `Course #${course.id}`;
+            select.appendChild(option);
+        });
+    } catch (err) {
+        console.error('Error loading course list for materials:', err);
+        select.innerHTML = '<option value="">خطأ في تحميل الكورسات</option>';
+    }
+}
+
+async function fetchMaterials() {
+    const tbody = document.getElementById('materialsTableBody');
+    if (!tbody) return;
+
+    if (!window.supabaseClient) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center">Supabase غير متصل</td></tr>';
+        return;
+    }
+
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('course_materials')
+            .select('*')
+            .order('material_order', { ascending: true });
+
+        if (error) throw error;
+
+        tbody.innerHTML = '';
+
+        if (!data || data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center">لا توجد ملازم</td></tr>';
+            return;
+        }
+
+        data.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${item.course_id ?? '-'}</strong></td>
+                <td>
+                    ${item.title || '-'}
+                    ${item.description ? `<br><small style="color:var(--muted); font-size: 0.85em;">${item.description.substring(0, 40)}${item.description.length > 40 ? '...' : ''}</small>` : ''}
+                </td>
+                <td>${item.material_order ?? '-'}</td>
+                <td><span class="badge ${item.is_free ? 'bg-success' : 'bg-warning'}">${item.is_free ? 'مجاني' : 'خاص'}</span></td>
+                <td>${item.file_url ? `<a href="${item.file_url}" target="_blank">فتح الملزمة</a>` : '-'}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline" style="color:var(--danger)" onclick="deleteMaterial(${item.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error('Error fetching materials:', err);
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center">خطأ في تحميل الملازم</td></tr>';
+    }
+}
+
 /* =========================================
    MODAL LOGIC
    ========================================= */
@@ -797,6 +884,118 @@ async function deleteMessage(id) {
     } catch (err) {
         console.error(err);
         alert("فشل حذف الرسالة");
+    }
+}
+
+document.getElementById('materialForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const courseId = document.getElementById('materialCourseId').value;
+    const title = document.getElementById('materialTitle').value;
+    const description = document.getElementById('materialDescription')?.value || null;
+    const materialOrder = document.getElementById('materialOrder')?.value || 1;
+    const isFree = document.getElementById('materialIsFree')?.value === 'true';
+    const fileUrlInput = document.getElementById('materialUrl')?.value;
+    const fileInput = document.getElementById('materialFile');
+    const pdfFile = fileInput?.files?.[0];
+
+    const btn = this.querySelector('button[type="submit"]');
+
+    if (!window.supabaseClient) {
+        alert("خطأ: Supabase غير متصل.");
+        return;
+    }
+
+    if (!courseId) {
+        alert("يرجى اختيار الكورس.");
+        return;
+    }
+
+    if (!title) {
+        alert("يرجى إدخال عنوان الملزمة.");
+        return;
+    }
+
+    if (!fileUrlInput && !pdfFile) {
+        alert("يرجى إدخال رابط أو اختيار ملف.");
+        return;
+    }
+
+    try {
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = "جاري الحفظ... (قد يستغرق الرفع وقتاً طويلاً)";
+        }
+
+        let finalFileUrl = fileUrlInput;
+
+        // Upload to Storage if File is selected
+        if (pdfFile) {
+            const safeName = sanitizeFileName(pdfFile.name);
+            const filePath = `course-${courseId}/${Date.now()}-${safeName}`;
+
+            const { error: uploadError } = await window.supabaseClient.storage
+                .from('course-materials')
+                .upload(filePath, pdfFile, {
+                    cacheControl: '3600',
+                    upsert: false,
+                    contentType: pdfFile.type
+                });
+
+            if (uploadError) {
+                throw new Error("تعذر الرفع (قد لا يكون هناك Storage bucket بإسم course-materials أو الملف كبير جداً). جرب استخدام رابط مباشر للملزمة. التفاصيل: " + uploadError.message);
+            }
+
+            const { data: publicUrlData } = window.supabaseClient.storage
+                .from('course-materials')
+                .getPublicUrl(filePath);
+
+            if (!publicUrlData || !publicUrlData.publicUrl) {
+                throw new Error('تعذر إنشاء رابط الملف بعد الرفع.');
+            }
+            finalFileUrl = publicUrlData.publicUrl;
+        }
+
+        // Insert into database
+        const { error: insertError } = await window.supabaseClient
+            .from('course_materials')
+            .insert([{
+                course_id: Number(courseId),
+                title: title,
+                description: description,
+                material_order: Number(materialOrder),
+                is_free: isFree,
+                file_url: finalFileUrl
+            }]);
+
+        if (insertError) {
+            throw new Error("تعذر حفظ الملزمة في قاعدة البيانات (تأكد من وجود جدول course_materials). التفاصيل: " + insertError.message);
+        }
+
+        closeModal('materialModal');
+        this.reset();
+        await fetchMaterials();
+        alert("تم حفظ بيانات الملزمة بنجاح!");
+    } catch (err) {
+        console.error(err);
+        alert("حدث خطأ أثناء حفظ الملزمة: " + (err.message || err));
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = "حفظ الملزمة";
+        }
+    }
+});
+
+async function deleteMaterial(id) {
+    if (!confirm("هل تريد حذف هذه الملزمة؟")) return;
+    try {
+        const { error } = await window.supabaseClient.from('course_materials').delete().eq('id', id);
+        if (error) throw error;
+        await fetchMaterials();
+    } catch (err) {
+        console.error(err);
+        alert("فشل حذف الملزمة");
     }
 }
 

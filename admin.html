@@ -451,6 +451,9 @@
                 <button class="nav-item" data-target="lessonsPane">
                     <i class="fas fa-video"></i> <span>إدارة فيديوهات الكورسات</span>
                 </button>
+                <button class="nav-item" data-target="materialsPane">
+                    <i class="fas fa-file-pdf"></i> <span data-i18n="admin-nav-materials">إدارة الملازم</span>
+                </button>
             </nav>
 
             <button id="logoutBtn" class="logout-btn">
@@ -713,6 +716,37 @@
                     </div>
                 </div>
             </section>
+
+            <section id="materialsPane" class="tab-pane">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3>الملازم (PDF)</h3>
+                        <button class="btn btn-primary" onclick="openModal('materialModal')">
+                            <i class="fas fa-plus"></i> إضافة ملزمة
+                        </button>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>رقم الكورس</th>
+                                    <th>عنوان الملزمة</th>
+                                    <th>الترتيب</th>
+                                    <th>النوع</th>
+                                    <th>الرابط / الملف</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="materialsTableBody">
+                                <tr>
+                                    <td colspan="4" class="text-center">جاري التحميل...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -908,6 +942,62 @@
             <p style="margin: 0; color: var(--muted);">
                 هذه النافذة جاهزة للتطوير لاحقًا لإدارة حسابات الطلاب.
             </p>
+        </div>
+    </div>
+
+    <div id="materialModal" class="admin-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>إضافة ملزمة (PDF)</h3>
+                <button class="close-btn" onclick="closeModal('materialModal')">&times;</button>
+            </div>
+
+            <form id="materialForm">
+                <div class="form-group">
+                    <label>اختر الكورس</label>
+                    <select id="materialCourseId" class="form-control" required>
+                        <option value="">جاري تحميل الكورسات...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>عنوان الملزمة</label>
+                    <input type="text" id="materialTitle" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label>وصف الملزمة (اختياري)</label>
+                    <textarea id="materialDescription" class="form-control" rows="3" placeholder="اكتب نبذة مختصرة عن محتوى الملزمة"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>ترتيب الملزمة</label>
+                    <input type="number" id="materialOrder" class="form-control" value="1" min="1" />
+                </div>
+
+                <div class="form-group">
+                    <label>نوع الملزمة</label>
+                    <select id="materialIsFree" class="form-control">
+                        <option value="false">خاصة بالمشتركين</option>
+                        <option value="true">مجانية (متاحة للجميع)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>رابط خارجي للملزمة (اختياري)</label>
+                    <input type="url" id="materialUrl" class="form-control" placeholder="https://..." />
+                </div>
+
+                <div class="form-group">
+                    <label>أو ملف PDF (للرفع)</label>
+                    <input type="file" id="materialFile" class="form-control" accept=".pdf" />
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('materialModal')">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ الملزمة</button>
+                </div>
+            </form>
         </div>
     </div>
 
